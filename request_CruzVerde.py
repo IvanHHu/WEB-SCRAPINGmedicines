@@ -14,7 +14,7 @@ def main(medicamento):
         pagina.encoding = 'ISO-8859-1'
         txtHtml = html.fromstring(pagina.content)
         urlPAGS = txtHtml.xpath("//span[@class='text-uppercase pagination-text']/text()")
-        print(urlPAGS)
+        #print(urlPAGS)
         if urlPAGS != [] :
             #print("hola desde paginas")
             url2 = 'https://www.cruzverde.com.co/search?q=' + medicamento + "&search-button=&lang=es_CO&start=12&sz=12"
