@@ -1,50 +1,95 @@
 import requests as s
 import sys
 from lxml import html
+from lxml.html import fromstring
+from itertools import cycle
+import traceback
+import random
+
+
 
 def main(medicamento):
-    headers = {
-        "Referer": "https://www.locatelcolombia.com/buscapagina?ft=vitamina&PS=12&sl=e3672a70-87b5-474e-b217-cea662d2e462&cc=1&sm=0&PageNumber=2",
-        "User-Agent":"Mozilla/5.0 (Windows NT 6.1; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36",
-        "x-requested-with":"XMLHttpRequest"
-
-    }
+    def get_proxies():
+        url = 'https://free-proxy-list.net/'
+        response = s.get(url)
+        parser = fromstring(response.text)
+        proxies = set()
+        for i in parser.xpath('//tbody/tr')[:10]:
+            if i.xpath('.//td[7][contains(text(),"yes")]'):
+                proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+                proxies.add(proxy)
+        return proxies
     
+    #----------------------------------------------------------------------------------------------------
+    user_agent_list = [
+    #Chrome
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+        #Firefox
+        'Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)',
+        'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
+        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
+        'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko',
+        'Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko',
+        'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko',
+        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)',
+        'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
+        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
+        'Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko',
+        'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
+        'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
+        'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
+    ]
+    user_agent = random.choice(user_agent_list)
+    #Set the headers 
+    headers = {'User-Agent': user_agent}
 
+    #----------------------------------------------------------------------------------------------------------
+    proxies = get_proxies()
+    proxy_pool = cycle(proxies)
+    proxy = next(proxy_pool)
 
-    url = "https://www.locatelcolombia.com/buscapagina?ft=" + medicamento + "&PS=12&sl=e3672a70-87b5-474e-b217-cea662d2e462&cc=1&sm=0&PageNumber=1"
-    print(url)
-    pagina = s.get(url, timeout=5)
-    #print(url)
-    if pagina.status_code == 200:
-        print("entre ")
-        pagina.encoding = 'ISO-8859-1'
-        txtHtml = html.fromstring(pagina.content)
-        #print(pagina.content)
-        sinResultados = txtHtml.xpath("//div[@class='page-title']//h2/text()")
-        #print(sinResultados)
+    pag = 0
+    for pagina in range(50):
+        pag= pag + 1 
+        url = "https://www.locatelcolombia.com/buscapagina?ft=" + medicamento + "&PS=12&sl=e3672a70-87b5-474e-b217-cea662d2e462&cc=1&sm=0&PageNumber="+ str(pag)
+        print(pag)
+        pagina = s.get(url, proxies={"http": proxy},headers=headers, timeout=5)
+        print(url, proxies,headers)
+        if pagina.status_code == 200:
+            pagina.encoding = 'ISO-8859-1'
+            
+            if str(pagina.content) != "b''":
+                txtHtml = html.fromstring(pagina.content)
+                sinResultados = txtHtml.xpath("//div[@class='page-title']//h2/text()")
 
-        if sinResultados == []:
-            #print("si hay :v")
-            nombres = txtHtml.xpath("//a[@class='product-name']/text()")
-            precios = txtHtml.xpath("//span[@class='bestPrice']/text()")
-            for n,p in zip(nombres,precios):
-                p= p.replace("\n                ", "")
-                p= p.replace("\n            ", "")
-                print(n +":"+p)
-            #print(nombres)
+                if sinResultados == []:
+                    nombres = txtHtml.xpath("//a[@class='product-name']/text()")
+                    precios = txtHtml.xpath("//span[@class='bestPrice']/text()")
+                    for n,p in zip(nombres,precios):
+                        p= p.replace("\n                ", "")
+                        p= p.replace("\n            ", "")
+                        print(n +":"+p)
+                    #print(nombres)
+                else:
+                    print(sinResultados[0] + "... No hay esultados")
 
+            elif str(pagina.content) == "b''":
+                #print(pagina.content)
+                break
+            
         else:
-            print(sinResultados[0] + "... No hay esultados")
-
-        
-        
-
-        
-    else:
-        print("Error al cargar la pagina")
+            print("Error al cargar la pagina")
             
-            
+             
 
 if __name__ == '__main__':
    main(sys.argv[1])
