@@ -7,8 +7,6 @@ from itertools import cycle
 import traceback
 import random
 
-
-
 def main(medicamento):
     def get_proxies():
         url = 'https://free-proxy-list.net/'
@@ -61,86 +59,103 @@ def main(medicamento):
 
 
     url = "https://www.drogueriascafam.com.co/buscar?search_query=" + medicamento + "&controller=search&orderby=position&orderway=desc"
-    pagina = s.get(url,proxies={"http": proxy},headers=headers, timeout=5)
-    print(url, proxies, headers)
-    if pagina.status_code == 200:
-        pagina.encoding = 'ISO-8859-1'
-        txtHtml = html.fromstring(pagina.content)
-        sinResultados = txtHtml.xpath("//p[@class='alert alert-warning']/text()")
-        #print(sinResultados)
+    try:
+        pagina = s.get(url,proxies={"http": proxy},headers=headers, timeout=5)
+        print(url, proxies, headers)
+        if pagina.status_code == 200:
+            try:
+                pagina.encoding = 'ISO-8859-1'
+                txtHtml = html.fromstring(pagina.content)
+                sinResultados = txtHtml.xpath("//p[@class='alert alert-warning']/text()")
+                print(sinResultados)
 
-        if sinResultados ==[]:
+                if sinResultados ==[]:
 
-            indPag = txtHtml.xpath("//div[@class='clearfix selector1']/span[1]/text()")
-            #print (indPag)
-            if indPag == []:
-                nombres = txtHtml.xpath("//span[@class='grid-name']/text()")
-        
-                prec1 = txtHtml.xpath("//div[@class='columns-container']//li[1]//div[1]//div[2]//span[1]/text()")
-                prec2 = txtHtml.xpath("//div[@class='columns-container']//li[2]//div[1]//div[2]//span[1]/text()")
-                prec3 = txtHtml.xpath("//div[@class='columns-container']//li[3]//div[1]//div[2]//span[1]/text()")
-                prec4 = txtHtml.xpath("//div[@class='columns-container']//li[4]//div[1]//div[2]//span[1]/text()")
-                prec5 = txtHtml.xpath("//div[@class='columns-container']//li[5]//div[1]//div[2]//span[1]/text()")
-                prec6 = txtHtml.xpath("//div[@class='columns-container']//li[6]//div[1]//div[2]//span[1]/text()")
-                prec7 = txtHtml.xpath("//div[@class='columns-container']//li[7]//div[1]//div[2]//span[1]/text()")
-                prec8 = txtHtml.xpath("//div[@class='columns-container']//li[8]//div[1]//div[2]//span[1]/text()")
-                prec9 = txtHtml.xpath("//div[@class='columns-container']//li[9]//div[1]//div[2]//span[1]/text()")
-                prec10 = txtHtml.xpath("//div[@class='columns-container']//li[10]//div[1]//div[2]//span[1]/text()")
-                prec11 = txtHtml.xpath("//div[@class='columns-container']//li[11]//div[1]//div[2]//span[1]/text()")
-                prec12 = txtHtml.xpath("//div[@class='columns-container']//li[12]//div[1]//div[2]//span[1]/text()")
-                
-                precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
-
-                for n,p in zip(nombres,precios):
-                    print(n +":"+p)
-            else:
-                pagina = 1
-                for pagina in range(50):
-                    pagina= pagina + 1
-                    print(pagina)
-                    url2 = "https://www.drogueriascafam.com.co/buscar?search_query=" + medicamento + "&controller=search&orderby=position&orderway=desc&p=" + str(pagina)
-                    pagina2 = s.get(url2,proxies={"http": proxy},headers=headers, timeout=5)
-                    print(url2, proxies, headers)
-                    #print(url2)
-                    txtHtml2 = html.fromstring(pagina2.content)
-                    sinResultados2 = txtHtml2.xpath("//p[@class='alert alert-warning']/text()")
-                    #print(sinResultados)
-
-                    if sinResultados2 ==[]:
-                        nombres = txtHtml2.xpath("//span[@class='grid-name']/text()")
-        
-                        prec1 = txtHtml2.xpath("//div[@class='columns-container']//li[1]//div[1]//div[2]//span[1]/text()")
-                        prec2 = txtHtml2.xpath("//div[@class='columns-container']//li[2]//div[1]//div[2]//span[1]/text()")
-                        prec3 = txtHtml2.xpath("//div[@class='columns-container']//li[3]//div[1]//div[2]//span[1]/text()")
-                        prec4 = txtHtml2.xpath("//div[@class='columns-container']//li[4]//div[1]//div[2]//span[1]/text()")
-                        prec5 = txtHtml2.xpath("//div[@class='columns-container']//li[5]//div[1]//div[2]//span[1]/text()")
-                        prec6 = txtHtml2.xpath("//div[@class='columns-container']//li[6]//div[1]//div[2]//span[1]/text()")
-                        prec7 = txtHtml2.xpath("//div[@class='columns-container']//li[7]//div[1]//div[2]//span[1]/text()")
-                        prec8 = txtHtml2.xpath("//div[@class='columns-container']//li[8]//div[1]//div[2]//span[1]/text()")
-                        prec9 = txtHtml2.xpath("//div[@class='columns-container']//li[9]//div[1]//div[2]//span[1]/text()")
-                        prec10 = txtHtml2.xpath("//div[@class='columns-container']//li[10]//div[1]//div[2]//span[1]/text()")
-                        prec11 = txtHtml2.xpath("//div[@class='columns-container']//li[11]//div[1]//div[2]//span[1]/text()")
-                        prec12 = txtHtml2.xpath("//div[@class='columns-container']//li[12]//div[1]//div[2]//span[1]/text()")
-                        
-                        precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
-
-                        for n,p in zip(nombres,precios):
-                            print(n +":"+p)
+                    indPag = txtHtml.xpath("//div[@class='clearfix selector1']/span[1]/text()")
+                    print (indPag)
+                    if indPag == []:
+                        try:
+                            nombres = txtHtml.xpath("//span[@class='grid-name']/text()")
                     
+                            prec1 = txtHtml.xpath("//div[@class='columns-container']//li[1]//div[1]//div[2]//span[1]/text()")
+                            prec2 = txtHtml.xpath("//div[@class='columns-container']//li[2]//div[1]//div[2]//span[1]/text()")
+                            prec3 = txtHtml.xpath("//div[@class='columns-container']//li[3]//div[1]//div[2]//span[1]/text()")
+                            prec4 = txtHtml.xpath("//div[@class='columns-container']//li[4]//div[1]//div[2]//span[1]/text()")
+                            prec5 = txtHtml.xpath("//div[@class='columns-container']//li[5]//div[1]//div[2]//span[1]/text()")
+                            prec6 = txtHtml.xpath("//div[@class='columns-container']//li[6]//div[1]//div[2]//span[1]/text()")
+                            prec7 = txtHtml.xpath("//div[@class='columns-container']//li[7]//div[1]//div[2]//span[1]/text()")
+                            prec8 = txtHtml.xpath("//div[@class='columns-container']//li[8]//div[1]//div[2]//span[1]/text()")
+                            prec9 = txtHtml.xpath("//div[@class='columns-container']//li[9]//div[1]//div[2]//span[1]/text()")
+                            prec10 = txtHtml.xpath("//div[@class='columns-container']//li[10]//div[1]//div[2]//span[1]/text()")
+                            prec11 = txtHtml.xpath("//div[@class='columns-container']//li[11]//div[1]//div[2]//span[1]/text()")
+                            prec12 = txtHtml.xpath("//div[@class='columns-container']//li[12]//div[1]//div[2]//span[1]/text()")
+                            
+                            precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
+
+                            for n,p in zip(nombres,precios):
+                                print(n +":"+p)
+                            return 0
+                        except:
+                            print("La request tiene una pagina y fallo en esta sección")
+                            return -1
+
                     else:
-                        break
+                        pagina = 1
+                        for pagina in range(50):
+                            pagina= pagina + 1
+                            print(pagina)
+                            url2 = "https://www.drogueriascafam.com.co/buscar?search_query=" + medicamento + "&controller=search&orderby=position&orderway=desc&p=" + str(pagina)
+                            pagina2 = s.get(url2,proxies={"http": proxy},headers=headers, timeout=5)
+                            print(url2, proxies, headers)
+                            #print(url2)
+                            txtHtml2 = html.fromstring(pagina2.content)
+                            sinResultados2 = txtHtml2.xpath("//p[@class='alert alert-warning']/text()")
+                            #print(sinResultados)
 
+                            if sinResultados2 ==[]:
+                                try:
+                                    nombres = txtHtml2.xpath("//span[@class='grid-name']/text()")
+                    
+                                    prec1 = txtHtml2.xpath("//div[@class='columns-container']//li[1]//div[1]//div[2]//span[1]/text()")
+                                    prec2 = txtHtml2.xpath("//div[@class='columns-container']//li[2]//div[1]//div[2]//span[1]/text()")
+                                    prec3 = txtHtml2.xpath("//div[@class='columns-container']//li[3]//div[1]//div[2]//span[1]/text()")
+                                    prec4 = txtHtml2.xpath("//div[@class='columns-container']//li[4]//div[1]//div[2]//span[1]/text()")
+                                    prec5 = txtHtml2.xpath("//div[@class='columns-container']//li[5]//div[1]//div[2]//span[1]/text()")
+                                    prec6 = txtHtml2.xpath("//div[@class='columns-container']//li[6]//div[1]//div[2]//span[1]/text()")
+                                    prec7 = txtHtml2.xpath("//div[@class='columns-container']//li[7]//div[1]//div[2]//span[1]/text()")
+                                    prec8 = txtHtml2.xpath("//div[@class='columns-container']//li[8]//div[1]//div[2]//span[1]/text()")
+                                    prec9 = txtHtml2.xpath("//div[@class='columns-container']//li[9]//div[1]//div[2]//span[1]/text()")
+                                    prec10 = txtHtml2.xpath("//div[@class='columns-container']//li[10]//div[1]//div[2]//span[1]/text()")
+                                    prec11 = txtHtml2.xpath("//div[@class='columns-container']//li[11]//div[1]//div[2]//span[1]/text()")
+                                    prec12 = txtHtml2.xpath("//div[@class='columns-container']//li[12]//div[1]//div[2]//span[1]/text()")
+                                    
+                                    precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
+
+                                    for n,p in zip(nombres,precios):
+                                        print(n +":"+p)
+                                except:
+                                    print("La request tiene bastantes productos y fallo en esta sección")
+                                    return -2
+                    
+                            else:
+                                break
+                else:
+                    #break
+                    print(sinResultados)
+            except:
+                    print("La petición hecha no fue exitosa")
+                    return 3
         else:
-            #break
-            print(sinResultados)
+            print("Error al cargar la pagina") 
+            return 2   
 
-    else:
-        print("Error al cargar la pagina")    
-
-
+    except:
+        print("Error desconocido al iniciar la petición")
+        return 1
         
 
 
 
 if __name__ == '__main__':
-   main(sys.argv[1])
+    status =  main(sys.argv[1])
+    print(status)
