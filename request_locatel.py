@@ -62,34 +62,48 @@ def main(medicamento):
         pag= pag + 1 
         url = "https://www.locatelcolombia.com/buscapagina?ft=" + medicamento + "&PS=12&sl=e3672a70-87b5-474e-b217-cea662d2e462&cc=1&sm=0&PageNumber="+ str(pag)
         print(pag)
-        pagina = s.get(url, proxies={"http": proxy},headers=headers, timeout=5)
-        print(url, proxies,headers)
-        if pagina.status_code == 200:
-            pagina.encoding = 'ISO-8859-1'
-            
-            if str(pagina.content) != "b''":
-                txtHtml = html.fromstring(pagina.content)
-                sinResultados = txtHtml.xpath("//div[@class='page-title']//h2/text()")
+        try:
+            pagina = s.get(url, proxies={"http": proxy},headers=headers, timeout=5)
+            print(url, proxies,headers)
+            if pagina.status_code == 200:
+                try:
+                    pagina.encoding = 'ISO-8859-1'
+                    if str(pagina.content) != "b''":
+                        try:
+                            txtHtml = html.fromstring(pagina.content)
+                            sinResultados = txtHtml.xpath("//div[@class='page-title']//h2/text()")
 
-                if sinResultados == []:
-                    nombres = txtHtml.xpath("//a[@class='product-name']/text()")
-                    precios = txtHtml.xpath("//span[@class='bestPrice']/text()")
-                    for n,p in zip(nombres,precios):
-                        p= p.replace("\n                ", "")
-                        p= p.replace("\n            ", "")
-                        print(n +":"+p)
-                    #print(nombres)
-                else:
-                    print(sinResultados[0] + "... No hay esultados")
+                            if sinResultados == []:
+                                nombres = txtHtml.xpath("//a[@class='product-name']/text()")
+                                precios = txtHtml.xpath("//span[@class='bestPrice']/text()")
+                                for n,p in zip(nombres,precios):
+                                    p= p.replace("\n                ", "")
+                                    p= p.replace("\n            ", "")
+                                    print(n +":"+p)
+                                #print(nombres)
+                            else:
+                                print(sinResultados[0] + "... No hay esultados")
+                                return 0
+                        except:
+                            print("La request tiene bastantes productos y fallo en esta sección")
+                            return -3
 
-            elif str(pagina.content) == "b''":
-                #print(pagina.content)
-                break
-            
-        else:
-            print("Error al cargar la pagina")
+                    elif str(pagina.content) == "b''":
+                        #print(pagina.content)
+                        break
+                except:
+                    print("La petición hecha no fue exitosa")
+                    return 3
+                
+            else:
+                print("Error al cargar la pagina")
+                return 2
+        except:
+            print("Error desconocido al iniciar la petición")
+            return 1
             
              
 
 if __name__ == '__main__':
-   main(sys.argv[1])
+    status =  main(sys.argv[1])
+    print(status)
