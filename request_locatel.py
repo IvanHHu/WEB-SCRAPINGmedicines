@@ -5,6 +5,7 @@ from lxml.html import fromstring
 from itertools import cycle
 import traceback
 import random
+import json
 
 
 
@@ -74,12 +75,20 @@ def main(medicamento):
                             sinResultados = txtHtml.xpath("//div[@class='page-title']//h2/text()")
 
                             if sinResultados == []:
+                                jsonList = []
                                 nombres = txtHtml.xpath("//a[@class='product-name']/text()")
                                 precios = txtHtml.xpath("//span[@class='bestPrice']/text()")
-                                for n,p in zip(nombres,precios):
-                                    p= p.replace("\n                ", "")
-                                    p= p.replace("\n            ", "")
-                                    print(n +":"+p)
+                                
+                                for i in range(0,len(precios)):
+                                    jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                                
+                                print(json.dumps(jsonList, indent = 1))
+
+
+                                #for n,p in zip(nombres,precios):
+                                #    p= p.replace("\n                ", "")
+                                #    p= p.replace("\n            ", "")
+                                #    print(n +":"+p)
                                 #print(nombres)
                             else:
                                 print(sinResultados[0] + "... No hay esultados")
