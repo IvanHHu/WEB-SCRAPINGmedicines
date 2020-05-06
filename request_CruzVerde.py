@@ -5,6 +5,7 @@ from lxml.html import fromstring
 from itertools import cycle
 import traceback
 import random
+import json
 
 def main(medicamento):
     def get_proxies():
@@ -60,7 +61,8 @@ def main(medicamento):
     
     try:
         pagina = s.get(url, proxies={"http": proxy},headers=headers, timeout=5)
-        print(url, proxies, headers)
+        #print(url, proxies, headers)
+        print(url)
         if pagina.status_code == 200:
             try:
                 pagina.encoding = 'ISO-8859-1'
@@ -80,38 +82,54 @@ def main(medicamento):
                                 url2 = 'https://www.cruzverde.com.co/search?q=' + medicamento + "&search-button=&lang=es_CO&start=" + str(pagina) +"&sz=12"
                                 #print(url2)
                                 pagina2 = s.get(url2, proxies={"http": proxy },headers=headers, timeout=5)
-                                print(url2, proxies, headers)
+                                #print(url2, proxies, headers)
+                                print(url2)
                                 txtHtml2 = html.fromstring(pagina2.content)
                                 sinResultados2 = txtHtml2.xpath("//p[@class='no-results-message text-center']/text()")
                                 #print(sinResultados2)
                                 #print(url2)
 
                                 if sinResultados2 == []:
+                                    jsonList = []
                                     nombres = txtHtml2.xpath("//a[@class='link']/text()")
                                     precios = txtHtml2.xpath("//span[@class='value pr-2']/text()")
-                                    for n,p in zip(nombres,precios):
-                                        n= n.replace("\n        \n            ", "")
-                                        n= n.replace("\n        \n    ", "")
-                                        p= p.replace("\n                    ", "")
-                                        p= p.replace("\n                ", "")
-                                        print(n +":"+p) 
+
+                                    for i in range(0,len(nombres)):
+                                        jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                                    
+                                    print(json.dumps(jsonList, indent = 1))
+ 
+                                    #nombres = nombres.replace("\n        \n            ", "")
+                                    #nombres = nombres.replace("\n        \n    ", "")
+                                    #for n,p in zip(nombres,precios):
+                                     #   n= n.replace("\n        \n            ", "")
+                                      #  n= n.replace("\n        \n    ", "")
+                                       # p= p.replace("\n                    ", "")
+                                        #p= p.replace("\n                ", "")
+                                        #print(n +":"+p) 
                                 else :
                                     break
                             return 0
                         except:
                             print("La request tiene bastantes productos y fallo en esta sección")
                             return -3
-                    #cuando solo hay un medicamnto
+                    #cuando solo hay un medicamento
                     elif fichaTec != []:
                         try:
+                            jsonList = []
                             nombres = txtHtml.xpath("//h1[@class='product-name']/text()")
                             precios = txtHtml.xpath("//span[@class='value pr-2']/text()")
-                            nombres[0] =nombres[0].replace("\n        \n            ", "")
-                            nombres[0] =nombres[0].replace("\n        \n    ", "")
-                            precios[0] = precios[0].replace("\n                    ", "")
-                            precios[0] = precios[0].replace("\n                ", "")
+
+                            for i in range(0,len(nombres)):
+                                jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                                    
+                            print(json.dumps(jsonList, indent = 1))
+                            #nombres[0] = nombres[0].replace("\n        \n            ", "")
+                            #nombres[0] = nombres[0].replace("\n        \n    ", "")
+                            #precios[0] = precios[0].replace("\n                    ", "")
+                            #precios[0] = precios[0].replace("\n                ", "")
                     
-                            print(nombres[0] + ":"+ precios[0] )
+                            #print(nombres[0] + ":"+ precios[0] )
                             return 0
                         except:
                             print("La request tiene tiene entre 2 y 12 productos y fallo en esta sección")
@@ -119,14 +137,25 @@ def main(medicamento):
                     #cuando hay solo una pagina
                     elif fichaTec == []:
                         try:
+                            jsonList = []
                             nombres = txtHtml.xpath("//a[@class='link']/text()")
                             precios = txtHtml.xpath("//span[@class='value pr-2']/text()")
-                            for n,p in zip(nombres,precios):
-                                n= n.replace("\n        \n            ", "")
-                                n= n.replace("\n        \n    ", "")
-                                p= p.replace("\n                    ", "")
-                                p= p.replace("\n                ", "")
-                                print(n +":"+p)
+                            
+                            for i in range(0,len(nombres)):
+                                jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                                    
+                            print(json.dumps(jsonList, indent = 1))
+
+
+
+                            #for n,p in zip(nombres,precios):
+                             #   n= n.replace("\n        \n            ", "")
+                              #  n= n.replace("\n        \n    ", "")
+                              #  p= p.replace("\n                    ", "")
+                              #  p= p.replace("\n                ", "")
+                              #  print(n +":"+p)
+
+
                         except:
                             print("La request tiene un producto y fallo en esta sección")
                             return -1
@@ -134,7 +163,7 @@ def main(medicamento):
                     print(sinResultados[0])
             
             except:
-                print("La petición echa no fue exitosa")
+                print("La petición hecha no fue exitosa")
                 return 3
                           
         else:
