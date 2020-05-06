@@ -6,6 +6,7 @@ from lxml.html import fromstring
 from itertools import cycle
 import traceback
 import random
+import json
 
 def main(medicamento):
     def get_proxies():
@@ -67,14 +68,15 @@ def main(medicamento):
                 pagina.encoding = 'ISO-8859-1'
                 txtHtml = html.fromstring(pagina.content)
                 sinResultados = txtHtml.xpath("//p[@class='alert alert-warning']/text()")
-                print(sinResultados)
+                #print(sinResultados)
 
                 if sinResultados ==[]:
 
                     indPag = txtHtml.xpath("//div[@class='clearfix selector1']/span[1]/text()")
-                    print (indPag)
+                    #print (indPag)
                     if indPag == []:
                         try:
+                            jsonList = []
                             nombres = txtHtml.xpath("//span[@class='grid-name']/text()")
                     
                             prec1 = txtHtml.xpath("//div[@class='columns-container']//li[1]//div[1]//div[2]//span[1]/text()")
@@ -91,9 +93,14 @@ def main(medicamento):
                             prec12 = txtHtml.xpath("//div[@class='columns-container']//li[12]//div[1]//div[2]//span[1]/text()")
                             
                             precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
+                            
+                            for i in range(0,len(nombres)):
+                                jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                            
+                            print(json.dumps(jsonList, indent = 1))
 
-                            for n,p in zip(nombres,precios):
-                                print(n +":"+p)
+                            #for n,p in zip(nombres,precios):
+                             #   print(n +":"+p)
                             return 0
                         except:
                             print("La request tiene una pagina y fallo en esta sección")
@@ -114,6 +121,7 @@ def main(medicamento):
 
                             if sinResultados2 ==[]:
                                 try:
+                                    jsonList = []
                                     nombres = txtHtml2.xpath("//span[@class='grid-name']/text()")
                     
                                     prec1 = txtHtml2.xpath("//div[@class='columns-container']//li[1]//div[1]//div[2]//span[1]/text()")
@@ -130,9 +138,16 @@ def main(medicamento):
                                     prec12 = txtHtml2.xpath("//div[@class='columns-container']//li[12]//div[1]//div[2]//span[1]/text()")
                                     
                                     precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
+                                    
+                                    for i in range(0,len(nombres)):
+                                        jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                                    
+                                    print(json.dumps(jsonList, indent = 1))
 
-                                    for n,p in zip(nombres,precios):
-                                        print(n +":"+p)
+
+
+                                    #for n,p in zip(nombres,precios):
+                                     #   print(n +":"+p)
                                 except:
                                     print("La request tiene bastantes productos y fallo en esta sección")
                                     return -2
