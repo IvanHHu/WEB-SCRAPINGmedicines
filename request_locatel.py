@@ -76,20 +76,20 @@ def main(medicamento):
 
                             if sinResultados == []:
                                 jsonList = []
+                                precios1 = []
                                 nombres = txtHtml.xpath("//a[@class='product-name']/text()")
                                 precios = txtHtml.xpath("//span[@class='bestPrice']/text()")
                                 
+                                for i in range(0,len(precios)):
+                                    precios[i] = precios[i].replace("\n                ", "")
+                                    precios[i] = precios[i].replace("\n            ", "")
+                                    precios1.append(precios[i])
+
                                 for i in range(0,len(precios)):
                                     jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
                                 
                                 print(json.dumps(jsonList, indent = 1))
 
-
-                                #for n,p in zip(nombres,precios):
-                                #    p= p.replace("\n                ", "")
-                                #    p= p.replace("\n            ", "")
-                                #    print(n +":"+p)
-                                #print(nombres)
                             else:
                                 print(sinResultados[0] + "... No hay esultados")
                                 return 0
