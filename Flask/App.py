@@ -1,7 +1,9 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
+from flask_cors import CORS
 #---------------------------------------------------------------------------------------------
 import requests as s
+import bs4
 import sys
 from lxml import html
 from lxml.html import fromstring
@@ -12,15 +14,19 @@ import json
 
 
 app = Flask(__name__)
+
+#My sql connection
 app.config[ 'MYSQL_HOST'] = 'localhost'
 app.config[ 'MYSQL_USER'] = 'root'
 app.config[ 'MYSQL_PASSWORD'] = ''
-app.config[ 'MYSQL_DB'] = 'BDMedicines'
+app.config[ 'MYSQL_DB'] = 'bdmedicines'
 mysql = MySQL(app)
+
+#Settings
+#app.secret_key='mysecretkey'
 
 @app.route('/cafam/<medicamento>', methods= ['POST'])
 def cafam(medicamento):
-    print("hola desde cafam")
     def get_proxies():
         url = 'https://free-proxy-list.net/'
         response = s.get(url)
@@ -31,7 +37,6 @@ def cafam(medicamento):
                 proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
                 proxies.add(proxy)
         return proxies
-    
     #----------------------------------------------------------------------------------------------------
 
     user_agent_list = [
@@ -70,7 +75,7 @@ def cafam(medicamento):
     proxy_pool = cycle(proxies)
     proxy = next(proxy_pool)
 
-
+    result = []
     url = "https://www.drogueriascafam.com.co/buscar?search_query=" + medicamento + "&controller=search&orderby=position&orderway=desc"
     try:
         pagina = s.get(url,proxies={"http": proxy},headers=headers, timeout=5)
@@ -80,7 +85,6 @@ def cafam(medicamento):
                 pagina.encoding = 'ISO-8859-1'
                 txtHtml = html.fromstring(pagina.content)
                 sinResultados = txtHtml.xpath("//p[@class='alert alert-warning']/text()")
-                #print(sinResultados)
 
                 if sinResultados ==[]:
 
@@ -109,8 +113,8 @@ def cafam(medicamento):
                             for i in range(0,len(nombres)):
                                 jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
                             
-                            return json.dumps(jsonList, indent = 1)
-
+                            #result.append(jsonList)
+                            return json.dumps(jsonList , indent = 1)
                             return 0
                         except:
                             print("La request tiene una pagina y fallo en esta sección")
@@ -124,7 +128,6 @@ def cafam(medicamento):
                             url2 = "https://www.drogueriascafam.com.co/buscar?search_query=" + medicamento + "&controller=search&orderby=position&orderway=desc&p=" + str(pagina)
                             pagina2 = s.get(url2,proxies={"http": proxy},headers=headers, timeout=5)
                             #print(url2, proxies, headers)
-                            #print(url2)
                             txtHtml2 = html.fromstring(pagina2.content)
                             sinResultados2 = txtHtml2.xpath("//p[@class='alert alert-warning']/text()")
                             #print(sinResultados)
@@ -152,13 +155,14 @@ def cafam(medicamento):
                                     for i in range(0,len(nombres)):
                                         jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
                                     
-                                    return json.dumps(jsonList, indent = 1)
-
+                                    result.append(jsonList)
+                                    
                                 except:
                                     print("La request tiene bastantes productos y fallo en esta sección")
                                     return -2
                     
                             else:
+                                return json.dumps(result , indent = 1)
                                 break
                 else:
                     #break
@@ -224,7 +228,7 @@ def cruzverde(medicamento):
     proxies = get_proxies()
     proxy_pool = cycle(proxies)
     proxy = next(proxy_pool)
-
+    result = []
     #------------------------------------------------------------------------------------------------------
     url = 'https://www.cruzverde.com.co/search?q=' + medicamento + "&search-button=&lang=es_CO"
     
@@ -270,10 +274,11 @@ def cruzverde(medicamento):
 
                                     for i in range(0,len(nombres)):
                                         jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
-                                    
-                                    return json.dumps(jsonList, indent = 1)
+
+                                    result.append(jsonList)
   
                                 else :
+                                    return json.dumps(result, indent = 1)
                                     break
                             return 0
                         except:
@@ -392,6 +397,7 @@ def locatel(medicamento):
     #Set the headers 
     headers = {'User-Agent': user_agent}
 
+    result = []
     #----------------------------------------------------------------------------------------------------------
     proxies = get_proxies()
     proxy_pool = cycle(proxies)
@@ -426,9 +432,8 @@ def locatel(medicamento):
 
                                 for i in range(0,len(precios)):
                                     jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
-                                
-                                return json.dumps(jsonList, indent = 1)
 
+                                result.append(jsonList)
                             else:
                                 print(sinResultados[0] + "... No hay esultados")
                                 return 0
@@ -437,7 +442,7 @@ def locatel(medicamento):
                             return -3
 
                     elif str(pagina.content) == "b''":
-                        #print(pagina.content)
+                        return json.dumps(result, indent = 1)
                         break
                 except:
                     print("La petición hecha no fue exitosa")
@@ -449,6 +454,33 @@ def locatel(medicamento):
         except:
             print("Error desconocido al iniciar la petición")
             return 1
+
+@app.route('/wiki/<medicamento>', methods = ['POST'])
+def wiki(medicamento):
+    response = s.get("https://es.wikipedia.org/wiki/" + medicamento )
+
+    if response is not None:
+        html = bs4.BeautifulSoup(response.text, 'html.parser')
+        title = html.select("#firstHeading")[0].text
+        paragraphs = html.select("p")
+        intro = '\n'.join([ para.text for para in paragraphs[0:5]])
+        return jsonify({
+            'descripcion': intro
+        })
+
+@app.route('/get_medicines', methods = ['GET'])
+def getmedicines():
+    medicines = []
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM medicines')
+    data = cur.fetchall()
+    for medicine in data:
+        medicines.append({
+            'producto': medicine[1],
+            'generico': medicine[17]
+        })
+    return jsonify(medicines)
+
 
 
 if __name__ == '__main__':
