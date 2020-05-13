@@ -22,6 +22,7 @@ app.config[ 'MYSQL_PASSWORD'] = ''
 app.config[ 'MYSQL_DB'] = 'bdmedicines'
 mysql = MySQL(app)
 
+CORS(app)
 #Settings
 #app.secret_key='mysecretkey'
 
@@ -476,6 +477,7 @@ def getmedicines():
     data = cur.fetchall()
     for medicine in data:
         medicines.append({
+            'id': medicine[0],
             'producto': medicine[1],
             'generico': medicine[17]
         })
@@ -484,4 +486,4 @@ def getmedicines():
 
 
 if __name__ == '__main__':
-    app.run(port = 3000, debug = True)
+    app.run(port = 5000, debug = True)
