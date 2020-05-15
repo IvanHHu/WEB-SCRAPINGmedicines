@@ -26,7 +26,7 @@ CORS(app)
 #Settings
 #app.secret_key='mysecretkey'
 
-@app.route('/cafam/<medicamento>', methods= ['POST'])
+@app.route('/cafam/<medicamento>', methods= ['GET'])
 def cafam(medicamento):
     def get_proxies():
         url = 'https://free-proxy-list.net/'
@@ -180,7 +180,7 @@ def cafam(medicamento):
         return 1
 
 
-@app.route('/cruzverde/<medicamento>', methods= ['POST'])
+@app.route('/cruzverde/<medicamento>', methods= ['GET'])
 def cruzverde(medicamento):
     def get_proxies():
         url = 'https://free-proxy-list.net/'
