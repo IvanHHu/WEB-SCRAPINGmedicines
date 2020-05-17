@@ -11,7 +11,7 @@ from itertools import cycle
 import traceback
 import random
 import json
-
+import wikipedia
 
 app = Flask(__name__)
 
@@ -112,7 +112,7 @@ def cafam(medicamento):
                             precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
                             
                             for i in range(0,len(nombres)):
-                                jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i]}])
                             
                             #result.append(jsonList)
                             return json.dumps(jsonList , indent = 1)
@@ -168,6 +168,11 @@ def cafam(medicamento):
                 else:
                     #break
                     print(sinResultados)
+                    jsonList = []
+                    jsonList.append({"medicamento" : sinResultados, "precio" : "" })
+                    result.append(jsonList)
+                    return json.dumps(result , indent = 1)
+                   
             except:
                     print("La petición hecha no fue exitosa")
                     return 3
@@ -353,7 +358,7 @@ def cruzverde(medicamento):
         #return 1
 
 
-@app.route('/locatel/<medicamento>', methods = ['POST'])
+@app.route('/locatel/<medicamento>', methods = ['GET'])
 def locatel(medicamento):
     def get_proxies():
         url = 'https://free-proxy-list.net/'
@@ -456,18 +461,14 @@ def locatel(medicamento):
             print("Error desconocido al iniciar la petición")
             return 1
 
-@app.route('/wiki/<medicamento>', methods = ['POST'])
+@app.route('/wiki/<medicamento>', methods = ['GET'])
 def wiki(medicamento):
-    response = s.get("https://es.wikipedia.org/wiki/" + medicamento )
-
-    if response is not None:
-        html = bs4.BeautifulSoup(response.text, 'html.parser')
-        title = html.select("#firstHeading")[0].text
-        paragraphs = html.select("p")
-        intro = '\n'.join([ para.text for para in paragraphs[0:5]])
-        return jsonify({
-            'descripcion': intro
-        })
+    
+    wikipedia.set_lang("es")
+    parrafo=   wikipedia.summary( medicamento, sentences=2)
+    return jsonify({
+        'descripcion': parrafo
+    })
 
 @app.route('/get_medicines', methods = ['GET'])
 def getmedicines():
@@ -482,6 +483,22 @@ def getmedicines():
             'generico': medicine[17]
         })
     return jsonify(medicines)
+
+@app.route('/get_medicine/<medicamento>', methods = ['GET'])
+def getmedicine(medicamento):
+    medicines = []
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM medicines WHERE producto LIKE'+ '"' + medicamento +'%"')
+    data = cur.fetchall()
+    for medicine in data:
+        medicines.append({
+            'id': medicine[0],
+            'producto': medicine[1],
+            'generico': medicine[17]
+        })
+    return jsonify(medicines)
+
+    
 
 
 

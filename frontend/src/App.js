@@ -15,7 +15,7 @@ render(){
         <Switch>
           <Route path="/about" component={About}  />
           <Route path="/search" component={Search}  />
-          <Route path="/medicines" component={Medicines}  />
+          <Route path="/" component={Medicines}  />
         </Switch>
       </div>
       

@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import {SearchBD} from './SearchBD'
 
 
 const API = process.env.REACT_APP_API;
@@ -20,15 +21,19 @@ export const Medicines = () =>{
 
 
     return (
+        <div>
+            <SearchBD/>
 
-        <div className="col-md-10"> 
-        <h2> Registros </h2>
+            <br></br> 
+            <br></br>
+            <h2> Registros </h2>
             <table className = "table table-striped">
                 <thead >
                     <tr>
-                        <th># </th>
-                        <th>Medicamento </th>
-                        <th>Generico </th>
+                        <th> <h5> #</h5></th>
+                        <th><h5>Medicamento</h5> </th>
+                        <th> <h5> Generico</h5></th>
+                        <th> <h5> Operaciones </h5></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,10 +42,12 @@ export const Medicines = () =>{
                         <td> {medicine.id} </td>
                         <td> {medicine.producto} </td>
                         <td> {medicine.generico} </td>
+                        <td>  <input type="submit"  onClick={() => this.sendMedicamento(medicine.producto)} className ="btn btn-lg btn-info btn-block" value="Buscar en farmacias"/> </td>
                     </tr>
                 ))}
                 </tbody>
             </table>
+
         </div>
 
     )

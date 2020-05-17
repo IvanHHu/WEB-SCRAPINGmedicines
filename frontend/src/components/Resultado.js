@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import Producto from './Producto';
 
 export class Resultado extends Component{
     mostrarMedicines = () => {
@@ -10,15 +9,24 @@ export class Resultado extends Component{
         return(
             <React.Fragment>
                 <div className="col-12 p5 row">
-                <h5>
-                Resultados...
-                </h5>
-                    {medicines.map(medicine => (
-                        <Producto
-                            key = {medicine.medicamento}
-                            medicine =  {medicine}
-                        />
-                    ))}
+                <table className = "table table-striped">
+                <thead >
+                    <h2>Resultados de Cafam</h2>
+                    <tr>
+                        <th>Medicamento </th>
+                        <th>Precio </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {medicines.map(medicine => (
+                    <tr key = {medicine.medicamento }>
+                        <td> {medicine.medicamento} </td>
+                        <td> {medicine.precio} </td>
+
+                    </tr>
+                ))}
+                </tbody>
+            </table>
                 </div>
             </React.Fragment>
         )

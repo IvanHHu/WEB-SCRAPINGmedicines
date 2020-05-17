@@ -37,7 +37,7 @@ export class Search extends Component {
                 <div className="row">
                             <div className=" form-group col-md-9">
                                 <input ref = {this.busquedaRef} type="text" className="form-control"
-                                        placeholder= "Busca un medicamento..."/>
+                                        placeholder= "Busca en las farmacias..."/>
                             </div>
                                 
                             <div className="form-group col-md-3"  >
