@@ -26,6 +26,8 @@ export const Medicines = () =>{
 
             <br></br> 
             <br></br>
+            <br></br> 
+            <br></br>
             <h2> Registros </h2>
             <table className = "table table-striped">
                 <thead >
@@ -33,7 +35,6 @@ export const Medicines = () =>{
                         <th> <h5> #</h5></th>
                         <th><h5>Medicamento</h5> </th>
                         <th> <h5> Generico</h5></th>
-                        <th> <h5> Operaciones </h5></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,8 +43,7 @@ export const Medicines = () =>{
                         <td> {medicine.id} </td>
                         <td> {medicine.producto} </td>
                         <td> {medicine.generico} </td>
-                        <td>  <input type="submit"  onClick={() => this.sendMedicamento(medicine.producto)} className ="btn btn-lg btn-info btn-block" value="Buscar en farmacias"/> </td>
-                    </tr>
+                        </tr>
                 ))}
                 </tbody>
             </table>

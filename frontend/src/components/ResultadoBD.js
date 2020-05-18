@@ -6,63 +6,138 @@ const API = process.env.REACT_APP_API;
 
 export class ResultadoBD extends Component{
 
-
     state = {
         medicine : '',
         generico : '',
         medicines : [],
-        genericos : []
+        genericos : [],
+        medicinesCV : [],
+        genericosCV : [],
+        medicinesLC : [],
+        genericosLC : []
     }
 
     consultarApi = async() => {
-        var numbers = ''
-        var numbers2 = ''
+        //consultas a cafam
+        var arreglos = ''
+        var arreglos2 = ''
         const res  =  await fetch(`${API}/cafam/`+ this.state.medicine)
         const data = await res.json();
         const arrays = data.length
-        
         const resG  =  await fetch(`${API}/cafam/`+ this.state.generico)
         const dataG = await resG.json();
         const arrays2 = dataG.length
 
+        //consultas a Cruz verde
+        var arreglosCV = '';
+        var arreglos2CV = '';
+        const resCV  =  await fetch(`${API}/cruzverde/`+ this.state.medicine)
+        const dataCV = await resCV.json();
+        const arraysCV = dataCV.length
+        const resGCV  =  await fetch(`${API}/cruzverde/`+ this.state.generico)
+        const dataGCV = await resGCV.json();
+        const arrays2CV = dataGCV.length
+
+        //consultas a locatel
+        var arreglosLC = '';
+        var arreglos2LC = '';
+        const resLC  =  await fetch(`${API}/locatel/`+ this.state.medicine)
+        const dataLC = await resLC.json();
+        const arraysLC = dataLC.length
+        const resGLC  =  await fetch(`${API}/locatel/`+ this.state.generico)
+        const dataGLC = await resGLC.json();
+        const arrays2LC = dataGLC.length
+
         if (arrays > 1){
             for (var i = 0; i < arrays -1; i++) {
-                if (numbers === ''){
-                    numbers = data[i].concat(data[i + 1]);
+                if (arreglos === ''){
+                    arreglos = data[i].concat(data[i + 1]);
                 }
                 else{
-                    numbers = numbers.concat(data[i + 1 ])
+                    arreglos = arreglos.concat(data[i + 1 ])
                 }
-    
             }
-            console.log(numbers)
-           
         }
-
+        else{
+            arreglos = data[0]
+        }
         if (arrays2 > 1){
             for (var i = 0; i < arrays2 -1; i++) {
-                if (numbers2 === ''){
-                    numbers2 = dataG[i].concat(dataG[i + 1]);
+                if (arreglos2 === ''){
+                    arreglos2 = dataG[i].concat(dataG[i + 1]);
                 }
                 else{
-                    numbers2 = numbers2.concat(dataG[i + 1 ])
+                    arreglos2 = arreglos2.concat(dataG[i + 1 ])
                 }
     
             }
-            console.log(numbers2)
-           
+        }
+        else{
+            arreglos2 = dataG[0]
+        }
+        ///////////////////////////////////////////////////////////////////////////////////////
+        
+
+        if (arraysCV > 1){
+            for (var i = 0; i < arraysCV -1; i++) {
+                if (arreglosCV === ''){
+                    arreglosCV = dataCV[i].concat(dataCV[i + 1]);
+                }
+                else{
+                    arreglosCV = arreglosCV.concat(dataCV[i + 1 ])
+                }
+            }
+        }
+        else{
+            arreglosCV = dataCV[0]
+        }
+        if (arrays2CV > 1){
+            for (var i = 0; i < arrays2CV -1; i++) {
+                if (arreglos2CV === ''){
+                    arreglos2CV = dataGCV[i].concat(dataGCV[i + 1]);
+                }
+                else{
+                    arreglos2CV = arreglos2CV.concat(dataGCV[i + 1 ])
+                }
+    
+            }
+        }
+        else{
+            arreglos2CV = dataGCV[0]
         }
 
-        console.log(arrays)
-        console.log(data)
-        console.log(arrays2)
-        console.log(dataG)
+         ///////////////////////////////////////////////////////////////////////////////////////
         
-        //this.setState( {medicines : numbers, genericos : dataG[0]})
-
-         //.then(respuesta => respuesta.json() )
-         //.then(resultado => console.log(resultado[0]) )
-         //.then(resultado => this.setState( { medicines : resultado}) )
+        if (arraysLC > 1){
+            for (var i = 0; i < arraysLC -1; i++) {
+                if (arreglosLC === ''){
+                    arreglosLC = dataLC[i].concat(dataLC[i + 1]);
+                }
+                else{
+                    arreglosLC = arreglosLC.concat(dataLC[i + 1 ])
+                }
+            }
+        }
+        else{
+            arreglosLC = dataLC[0]
+        }
+        if (arrays2LC > 1){
+            for (var i = 0; i < arrays2LC -1; i++) {
+                if (arreglos2LC === ''){
+                    arreglos2LC = dataGLC[i].concat(dataGLC[i + 1]);
+                }
+                else{
+                    arreglos2LC = arreglos2LC.concat(dataGLC[i + 1 ])
+                }
+            }
+        }
+        else{
+            arreglos2LC = dataGLC[0]
+        }
+        console.log(arreglos , arreglos2)
+        console.log(arreglosCV , arreglos2CV)
+        console.log(arreglosLC , arreglos2LC)
+        this.setState( {medicines : arreglos, genericos : arreglos2, medicinesCV : arreglosCV, genericosCV : arreglos2CV,medicinesLC : arreglosLC, genericosLC : arreglos2LC })
 
     }
 
@@ -73,7 +148,6 @@ export class ResultadoBD extends Component{
         }, () => {
             this.consultarApi();
         })
-        //console.log(medicamento)
     }
 
     
@@ -81,14 +155,17 @@ export class ResultadoBD extends Component{
         const medicines = this.props.medicines;
         if (medicines.length === 0) return  null;
 
-        //console.log(medicines);
-
         return(
             <React.Fragment>
                 <div className="col-12 p5 row">
                     <ResultadoFull
                         medicines = {this.state.medicines}
                         genericos = {this.state.genericos}
+                        medicinesCV = {this.state.medicinesCV}
+                        genericosCV = {this.state.genericosCV}
+                        medicinesLC = {this.state.medicinesLC}
+                        genericosLC = {this.state.genericosLC}
+                        
                     />
                     <table className = "table table-striped">
                     <thead >
@@ -115,10 +192,7 @@ export class ResultadoBD extends Component{
             </React.Fragment>
         )
     }
-   
-
-
-
+    
     render(){
         return(
             <React.Fragment>

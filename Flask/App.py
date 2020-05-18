@@ -169,7 +169,7 @@ def cafam(medicamento):
                     #break
                     print(sinResultados)
                     jsonList = []
-                    jsonList.append({"medicamento" : sinResultados, "precio" : "" })
+                    jsonList.append({"medicamento" : "Sin Resultados", "precio" : "N/A" })
                     result.append(jsonList)
                     return json.dumps(result , indent = 1)
                    
@@ -272,13 +272,15 @@ def cruzverde(medicamento):
                                     for i in range(0,len(nombres)):
                                         nombres[i] = nombres[i].replace("\n        \n            ", "")
                                         nombres[i] = nombres[i].replace("\n        \n    ", "")
+                                        nombres1.append(nombres[i])
+                                    
+                                    for i in range(0,len(precios)):
                                         precios[i] = precios[i].replace("\n                    ", "")
                                         precios[i] = precios[i].replace("\n                ", "")
-                                        nombres1.append(nombres[i])
                                         precios1.append(precios[i])
                                     #print(nombres1)
 
-                                    for i in range(0,len(nombres)):
+                                    for i in range(0,len(precios)):
                                         jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
 
                                     result.append(jsonList)
@@ -302,13 +304,15 @@ def cruzverde(medicamento):
                             for i in range(0,len(nombres)):
                                 nombres[i] = nombres[i].replace("\n        \n            ", "")
                                 nombres[i] = nombres[i].replace("\n        \n    ", "")
+                                nombres1.append(nombres[i])
+                            
+                            for i in range(0,len(precios)):
                                 precios[i] = precios[i].replace("\n                    ", "")
                                 precios[i] = precios[i].replace("\n                ", "")
-                                nombres1.append(nombres[i])
                                 precios1.append(precios[i])
 
-                            for i in range(0,len(nombres)):
-                                jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                            for i in range(0,len(precios)):
+                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i]}])
                                     
                             return json.dumps(jsonList, indent = 1)
                            
@@ -328,13 +332,16 @@ def cruzverde(medicamento):
                             for i in range(0,len(nombres)):
                                 nombres[i] = nombres[i].replace("\n        \n            ", "")
                                 nombres[i] = nombres[i].replace("\n        \n    ", "")
+                                nombres1.append(nombres[i])
+                            
+                            for i in range(0,len(precios)):
                                 precios[i] = precios[i].replace("\n                    ", "")
                                 precios[i] = precios[i].replace("\n                ", "")
-                                nombres1.append(nombres[i])
+                               
                                 precios1.append(precios[i])
                             
-                            for i in range(0,len(nombres)):
-                                jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                            for i in range(0,len(precios)):
+                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i]}])
                                     
                             return json.dumps(jsonList, indent = 1)
 
@@ -343,6 +350,10 @@ def cruzverde(medicamento):
                             #return -1
                 else:
                     print(sinResultados[0])
+                    jsonList = []
+                    jsonList.append({"medicamento" : sinResultados[0], "precio" : "N/A" })
+                    result.append(jsonList)
+                    return json.dumps(result , indent = 1)
             
             except:
                 print("La petición hecha no fue exitosa")
@@ -420,13 +431,14 @@ def locatel(medicamento):
             if pagina.status_code == 200:
                 try:
                     pagina.encoding = 'ISO-8859-1'
+                    jsonList = []
                     if str(pagina.content) != "b''":
                         try:
                             txtHtml = html.fromstring(pagina.content)
                             sinResultados = txtHtml.xpath("//div[@class='page-title']//h2/text()")
-
+                            #print(sinResultados)
                             if sinResultados == []:
-                                jsonList = []
+                                
                                 precios1 = []
                                 nombres = txtHtml.xpath("//a[@class='product-name']/text()")
                                 precios = txtHtml.xpath("//span[@class='bestPrice']/text()")
@@ -442,13 +454,22 @@ def locatel(medicamento):
                                 result.append(jsonList)
                             else:
                                 print(sinResultados[0] + "... No hay esultados")
-                                return 0
+                                
+                                return json.dumps(result , indent = 1)
+                                #return 0
                         except:
                             print("La request tiene bastantes productos y fallo en esta sección")
                             return -3
 
                     elif str(pagina.content) == "b''":
+                        print(result)
+                        if result == []:
+                            jsonList.append({"medicamento" : "Sin resultados en Locatel", "precio" : "N/A" })
+                            result.append(jsonList)
+                            return json.dumps(result, indent = 1)
+                            
                         return json.dumps(result, indent = 1)
+                        
                         break
                 except:
                     print("La petición hecha no fue exitosa")
@@ -490,13 +511,24 @@ def getmedicine(medicamento):
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM medicines WHERE producto LIKE'+ '"' + medicamento +'%"')
     data = cur.fetchall()
-    for medicine in data:
+    print(data)
+    if data != ():
+        for medicine in data:
+            medicines.append({
+                'id': medicine[0],
+                'producto': medicine[1],
+                'generico': medicine[17]
+            })
+        return jsonify(medicines)
+    elif data == ():
         medicines.append({
-            'id': medicine[0],
-            'producto': medicine[1],
-            'generico': medicine[17]
+            'id': "N/A",
+            'producto': "No contamos con el medicamento en nuestros datos. Puede buscar directamente el medicamento en la seccion Search",
+            'generico': "N/A"
         })
-    return jsonify(medicines)
+        return jsonify(medicines)
+
+
 
     
 

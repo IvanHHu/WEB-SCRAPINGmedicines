@@ -59,128 +59,137 @@ def main(medicamento):
     #------------------------------------------------------------------------------------------------------
     url = 'https://www.cruzverde.com.co/search?q=' + medicamento + "&search-button=&lang=es_CO"
     
-    try:
-        pagina = s.get(url, proxies={"http": proxy},headers=headers, timeout=5)
-        #print(url, proxies, headers)
-        print(url)
-        if pagina.status_code == 200:
-            try:
-                pagina.encoding = 'ISO-8859-1'
-                txtHtml = html.fromstring(pagina.content)
-                urlPAGS = txtHtml.xpath("//span[@class='text-uppercase pagination-text']/text()")
-                fichaTec = txtHtml.xpath("//span[@class='tab1Title']/text()")
-                sinResultados = txtHtml.xpath("//p[@class='no-results-message text-center']/text()")
-                pagina = 0
-                #print(sinResultados)
-                if sinResultados == []:
-                    #Cuando hay varias paginas
-                    if urlPAGS != [] :
-                        try:
-                            for pagina in range(50):
-                                print(pagina + 1)
-                                pagina= pagina*12  
-                                url2 = 'https://www.cruzverde.com.co/search?q=' + medicamento + "&search-button=&lang=es_CO&start=" + str(pagina) +"&sz=12"
-                                pagina2 = s.get(url2, proxies={"http": proxy },headers=headers, timeout=5)
-                                #print(url2, proxies, headers)
-                                print(url2)
-                                txtHtml2 = html.fromstring(pagina2.content)
-                                sinResultados2 = txtHtml2.xpath("//p[@class='no-results-message text-center']/text()")
-                                #print(sinResultados2)
-                                #print(url2)
+#try:
+    pagina = s.get(url, proxies={"http": proxy},headers=headers, timeout=5)
+    #print(url, proxies, headers)
+    print(url)
+    if pagina.status_code == 200:
+    #try:
+        pagina.encoding = 'ISO-8859-1'
+        txtHtml = html.fromstring(pagina.content)
+        urlPAGS = txtHtml.xpath("//span[@class='text-uppercase pagination-text']/text()")
+        fichaTec = txtHtml.xpath("//span[@class='tab1Title']/text()")
+        sinResultados = txtHtml.xpath("//p[@class='no-results-message text-center']/text()")
+        pagina = 0
+        #print(sinResultados)
+        if sinResultados == []:
+            #Cuando hay varias paginas
+            if urlPAGS != [] :
+                #try:
+                for pagina in range(50):
+                    print(pagina + 1)
+                    pagina= pagina*12  
+                    url2 = 'https://www.cruzverde.com.co/search?q=' + medicamento + "&search-button=&lang=es_CO&start=" + str(pagina) +"&sz=12"
+                    pagina2 = s.get(url2, proxies={"http": proxy },headers=headers, timeout=5)
+                    #print(url2, proxies, headers)
+                    print(url2)
+                    txtHtml2 = html.fromstring(pagina2.content)
+                    sinResultados2 = txtHtml2.xpath("//p[@class='no-results-message text-center']/text()")
+                    #print(sinResultados2)
+                    #print(url2)
 
-                                if sinResultados2 == []:
-                                    jsonList = []
-                                    nombres1 = []
-                                    precios1 = []
-                                    nombres = txtHtml2.xpath("//a[@class='link']/text()")
-                                    precios = txtHtml2.xpath("//span[@class='value pr-2']/text()")
-
-                                    for i in range(0,len(nombres)):
-                                        nombres[i] = nombres[i].replace("\n        \n            ", "")
-                                        nombres[i] = nombres[i].replace("\n        \n    ", "")
-                                        precios[i] = precios[i].replace("\n                    ", "")
-                                        precios[i] = precios[i].replace("\n                ", "")
-                                        nombres1.append(nombres[i])
-                                        precios1.append(precios[i])
-                                    #print(nombres1)
-
-                                    for i in range(0,len(nombres)):
-                                        jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
-                                    
-                                    print(json.dumps(jsonList, indent = 1))
-  
-                                else :
-                                    break
-                            return 0
-                        except:
-                            print("La request tiene bastantes productos y fallo en esta sección")
-                            return -3
-                    #cuando solo hay un medicamento
-                    elif fichaTec != []:
-                        try:
-                            jsonList = []
-                            nombres1 = []
-                            precios1 = []
-                            nombres = txtHtml.xpath("//h1[@class='product-name']/text()")
-                            precios = txtHtml.xpath("//span[@class='value pr-2']/text()")
-
-                            for i in range(0,len(nombres)):
-                                nombres[i] = nombres[i].replace("\n        \n            ", "")
-                                nombres[i] = nombres[i].replace("\n        \n    ", "")
-                                precios[i] = precios[i].replace("\n                    ", "")
-                                precios[i] = precios[i].replace("\n                ", "")
-                                nombres1.append(nombres[i])
-                                precios1.append(precios[i])
-
-                            for i in range(0,len(nombres)):
-                                jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
-                                    
-                            print(json.dumps(jsonList, indent = 1))
-                           
-                            return 0
-                        except:
-                            print("La request tiene tiene entre 2 y 12 productos y fallo en esta sección")
-                            return -2
-                    #cuando hay solo una pagina
-                    elif fichaTec == []:
-                        try:
-                            jsonList = []
-                            nombres1 = []
-                            precios1 = []
-                            nombres = txtHtml.xpath("//a[@class='link']/text()")
-                            precios = txtHtml.xpath("//span[@class='value pr-2']/text()")
-
-                            for i in range(0,len(nombres)):
-                                nombres[i] = nombres[i].replace("\n        \n            ", "")
-                                nombres[i] = nombres[i].replace("\n        \n    ", "")
-                                precios[i] = precios[i].replace("\n                    ", "")
-                                precios[i] = precios[i].replace("\n                ", "")
-                                nombres1.append(nombres[i])
-                                precios1.append(precios[i])
+                    if sinResultados2 == []:
+                        jsonList = []
+                        nombres1 = []
+                        precios1 = []
+                        nombres = txtHtml2.xpath("//a[@class='link']/text()")
+                        precios = txtHtml2.xpath("//span[@class='value pr-2']/text()")
+                        
+                        for i in range(0,len(nombres)):
+                            nombres[i] = nombres[i].replace("\n        \n            ", "")
+                            nombres[i] = nombres[i].replace("\n        \n    ", "")
+                            nombres1.append(nombres[i])
                             
-                            for i in range(0,len(nombres)):
-                                jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
-                                    
-                            print(json.dumps(jsonList, indent = 1))
+                        
+                        for i in range(0,len(precios)):
+                            precios[i] = precios[i].replace("\n                    ", "")
+                            precios[i] = precios[i].replace("\n                ", "")
+                            precios1.append(precios[i])
 
-                        except:
-                            print("La request tiene un producto y fallo en esta sección")
-                            return -1
-                else:
-                    print(sinResultados[0])
-            
-            except:
-                print("La petición hecha no fue exitosa")
-                return 3
-                          
+                        #print(nombres1)
+                        #print(precios1)
+
+                        for i in range(0,len(precios)):
+                            jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                        
+                        print(json.dumps(jsonList, indent = 1))
+
+                    else :
+                        break
+                    #return 0
+                #except:
+                    #   print("La request tiene bastantes productos y fallo en esta sección")
+                    #  return -3
+            #cuando solo hay un medicamento
+            elif fichaTec != []:
+                #try:
+                jsonList = []
+                nombres1 = []
+                precios1 = []
+                nombres = txtHtml.xpath("//h1[@class='product-name']/text()")
+                precios = txtHtml.xpath("//span[@class='value pr-2']/text()")
+
+                for i in range(0,len(nombres)):
+                    nombres[i] = nombres[i].replace("\n        \n            ", "")
+                    nombres[i] = nombres[i].replace("\n        \n    ", "")
+                    precios[i] = precios[i].replace("\n                    ", "")
+                    precios[i] = precios[i].replace("\n                ", "")
+                    nombres1.append(nombres[i])
+                    precios1.append(precios[i])
+
+                for i in range(0,len(nombres)):
+                    jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                        
+                print(json.dumps(jsonList, indent = 1))
+                
+                return 0
+                #except:
+                    #   print("La request tiene tiene entre 2 y 12 productos y fallo en esta sección")
+                    #  return -2
+            #cuando hay solo una pagina
+            elif fichaTec == []:
+            #try:
+                jsonList = []
+                nombres1 = []
+                precios1 = []
+                nombres = txtHtml.xpath("//a[@class='link']/text()")
+                precios = txtHtml.xpath("//span[@class='value pr-2']/text()")
+
+                for i in range(0,len(nombres)):
+                    nombres[i] = nombres[i].replace("\n        \n            ", "")
+                    nombres[i] = nombres[i].replace("\n        \n    ", "")
+                    precios[i] = precios[i].replace("\n                    ", "")
+                    precios[i] = precios[i].replace("\n                ", "")
+                    nombres1.append(nombres[i])
+                    precios1.append(precios[i])
+                
+                for i in range(0,len(nombres)):
+                    jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                        
+                print(json.dumps(jsonList, indent = 1))
+
+            # except:
+            #    print("La request tiene un producto y fallo en esta sección")
+                #   return -1
         else:
-            print("El request fue exitoso, mas algo paso en la pagina")
-            return 2
+            print(sinResultados[0])
+            jsonList = []
+            jsonList.append({"medicamento" : sinResultados[0], "precio" : "N/A" })
+            result.append(jsonList)
+            return json.dumps(result , indent = 1)
+    
+    #except:
+        #   print("La petición hecha no fue exitosa")
+        #  return 3
+                    
+    else:
+        print("El request fue exitoso, mas algo paso en la pagina")
+        return 2
 
 
-    except:
-        print("Error desconocido al iniciar la petición")
-        return 1
+#except:
+    #   print("Error desconocido al iniciar la petición")
+    #  return 1
 
             
 
