@@ -11,6 +11,8 @@ export class ResultadoFull extends Component{
         const medicinesLC = this.props.medicinesLC;
         const genericosLC = this.props.genericosLC;
 
+        const wiki = this.props.wiki
+
     
         if (medicines.length === 0) return  null;
 
@@ -24,6 +26,8 @@ export class ResultadoFull extends Component{
 
         if (genericosLC.length === 0) return  null;
 
+        if (wiki.length === 0) return  null;
+
 
         //console.log(medicines);
         //console.log(genericos);
@@ -33,9 +37,28 @@ export class ResultadoFull extends Component{
 
         //console.log(medicinesLC);
         //console.log(genericosLC);
+        console.log(wiki);
 
         return(
             <React.Fragment>
+                <div className="col-12  ">
+                    <table className = "table table-striped card card-body">
+                    <thead >
+                        <tr>
+                            <th>Descripcion de Wikipedia </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {wiki.map(wik => (
+                        <tr key = {wik.medicamento }>
+                            <td> {wik.descripcion} </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                    </table>
+                </div>
+
+
                 <div className="col-12 col-sm-6 col-md-6 col-lg-6 mb4 ">
                 <h6 >Medicamentos de Cafam</h6>
                     <table className = "table table-striped card card-body">

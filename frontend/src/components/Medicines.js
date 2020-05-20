@@ -9,7 +9,7 @@ export const Medicines = () =>{
     const [medicines, setMedicines] = useState([])
 
     const getMedicines = async() => {
-        const res = await fetch(`${API}/get_medicines`)
+        const res = await fetch(`${API}/get_last_medicines`)
         const data = await res.json();
         setMedicines(data)
     }
@@ -28,7 +28,7 @@ export const Medicines = () =>{
             <br></br>
             <br></br> 
             <br></br>
-            <h2> Registros </h2>
+            <h2> Ultimos medicamentos agregados </h2>
             <table className = "table table-striped">
                 <thead >
                     <tr>

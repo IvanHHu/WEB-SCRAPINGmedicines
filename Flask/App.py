@@ -349,7 +349,7 @@ def cruzverde(medicamento):
                             print("La request tiene un producto y fallo en esta sección")
                             #return -1
                 else:
-                    print(sinResultados[0])
+                    #print(sinResultados[0])
                     jsonList = []
                     jsonList.append({"medicamento" : sinResultados[0], "precio" : "N/A" })
                     result.append(jsonList)
@@ -462,7 +462,7 @@ def locatel(medicamento):
                             return -3
 
                     elif str(pagina.content) == "b''":
-                        print(result)
+                        #print(result)
                         if result == []:
                             jsonList.append({"medicamento" : "Sin resultados en Locatel", "precio" : "N/A" })
                             result.append(jsonList)
@@ -484,12 +484,30 @@ def locatel(medicamento):
 
 @app.route('/wiki/<medicamento>', methods = ['GET'])
 def wiki(medicamento):
-    
+    descripcion= []
     wikipedia.set_lang("es")
-    parrafo=   wikipedia.summary( medicamento, sentences=2)
-    return jsonify({
-        'descripcion': parrafo
-    })
+    parrafo = wikipedia.summary( medicamento, sentences=2)
+
+    descripcion.append({
+            'medicamento': medicamento,
+            'descripcion': parrafo
+        })
+    return jsonify( descripcion)
+
+@app.route('/get_last_medicines', methods = ['GET'])
+def getlastmedicines():
+    medicines = []
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM ( SELECT * FROM medicines ORDER BY id DESC LIMIT 50 ) sub ORDER BY id ASC')
+    data = cur.fetchall()
+    for medicine in data:
+        medicines.append({
+            'id': medicine[0],
+            'producto': medicine[1],
+            'generico': medicine[17]
+        })
+    return jsonify(medicines)
+
 
 @app.route('/get_medicines', methods = ['GET'])
 def getmedicines():
@@ -504,6 +522,7 @@ def getmedicines():
             'generico': medicine[17]
         })
     return jsonify(medicines)
+
 
 @app.route('/get_medicine/<medicamento>', methods = ['GET'])
 def getmedicine(medicamento):

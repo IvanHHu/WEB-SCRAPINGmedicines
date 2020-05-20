@@ -14,7 +14,8 @@ export class ResultadoBD extends Component{
         medicinesCV : [],
         genericosCV : [],
         medicinesLC : [],
-        genericosLC : []
+        genericosLC : [],
+        wiki : []
     }
 
     consultarApi = async() => {
@@ -47,6 +48,11 @@ export class ResultadoBD extends Component{
         const resGLC  =  await fetch(`${API}/locatel/`+ this.state.generico)
         const dataGLC = await resGLC.json();
         const arrays2LC = dataGLC.length
+
+        //consulta a wikipedia
+        const resWiki  =  await fetch(`${API}/wiki/`+ this.state.generico)
+        const dataWiki = await resWiki.json();
+
 
         if (arrays > 1){
             for (var i = 0; i < arrays -1; i++) {
@@ -134,10 +140,11 @@ export class ResultadoBD extends Component{
         else{
             arreglos2LC = dataGLC[0]
         }
-        console.log(arreglos , arreglos2)
-        console.log(arreglosCV , arreglos2CV)
-        console.log(arreglosLC , arreglos2LC)
-        this.setState( {medicines : arreglos, genericos : arreglos2, medicinesCV : arreglosCV, genericosCV : arreglos2CV,medicinesLC : arreglosLC, genericosLC : arreglos2LC })
+        //console.log(arreglos , arreglos2)
+        //console.log(arreglosCV , arreglos2CV)
+        //console.log(arreglosLC , arreglos2LC)
+        //console.log(dataWiki)
+        this.setState( {medicines : arreglos, genericos : arreglos2, medicinesCV : arreglosCV, genericosCV : arreglos2CV,medicinesLC : arreglosLC, genericosLC : arreglos2LC, wiki: dataWiki })
 
     }
 
@@ -165,6 +172,7 @@ export class ResultadoBD extends Component{
                         genericosCV = {this.state.genericosCV}
                         medicinesLC = {this.state.medicinesLC}
                         genericosLC = {this.state.genericosLC}
+                        wiki = {this.state.wiki}
                         
                     />
                     <table className = "table table-striped">
