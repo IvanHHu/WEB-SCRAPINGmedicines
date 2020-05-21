@@ -111,6 +111,8 @@ export class Search extends Component {
                             </div>
                                 
                             <div className="form-group col-md-3"  >
+
+                                
                                 <input type="submit" className = "btn btn-lg btn-danger btn-block" value="Buscar"/>
                             </div>  
                 </div>

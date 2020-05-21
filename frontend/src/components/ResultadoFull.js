@@ -15,17 +15,11 @@ export class ResultadoFull extends Component{
 
     
         if (medicines.length === 0) return  null;
-
         if (genericos.length === 0) return  null;
-
         if (medicinesCV.length === 0) return  null;
-
         if (genericosCV.length === 0) return  null;
-
         if (medicinesLC.length === 0) return  null;
-
         if (genericosLC.length === 0) return  null;
-
         if (wiki.length === 0) return  null;
 
 
@@ -74,6 +68,11 @@ export class ResultadoFull extends Component{
                         <tr key = {medicine.medicamento }>
                             <td> {medicine.medicamento} </td>
                             <td> {medicine.precio} </td>
+                            <td> 
+                                <a href={medicine.url}>
+                                    <input type="button" value="Ir"  className ="btn btn-lg btn-info btn-block"  />
+                                </a>
+                            </td>
 
                         </tr>
                     ))}
@@ -96,6 +95,11 @@ export class ResultadoFull extends Component{
                         <tr key = {generico.medicamento }>
                             <td> {generico.medicamento} </td>
                             <td> {generico.precio} </td>
+                            <td> 
+                                <a href={generico.url}>
+                                    <input type="button" value="Ir"  className ="btn btn-lg btn-info btn-block"  />
+                                </a>
+                            </td>
 
                         </tr>
                     ))}
@@ -121,6 +125,7 @@ export class ResultadoFull extends Component{
 
                         </tr>
                     ))}
+
                     </tbody>
                     </table>
                 </div>
@@ -162,6 +167,11 @@ export class ResultadoFull extends Component{
                         <tr key = {medicineLC.medicamento }>
                             <td> {medicineLC.medicamento} </td>
                             <td> {medicineLC.precio} </td>
+                            <td> 
+                                <a href={medicineLC.url}>
+                                    <input type="button" value="Ir"  className ="btn btn-lg btn-info btn-block"  />
+                                </a>
+                            </td>
 
                         </tr>
                     ))}
@@ -184,6 +194,11 @@ export class ResultadoFull extends Component{
                         <tr key = {genericoLC.medicamento }>
                             <td> {genericoLC.medicamento} </td>
                             <td> {genericoLC.precio} </td>
+                            <td> 
+                                <a href={genericoLC.url}>
+                                    <input type="button" value="Ir"  className ="btn btn-lg btn-info btn-block"  />
+                                </a>
+                            </td>
 
                         </tr>
                     ))}

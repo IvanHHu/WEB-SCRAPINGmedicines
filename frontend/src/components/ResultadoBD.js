@@ -15,10 +15,12 @@ export class ResultadoBD extends Component{
         genericosCV : [],
         medicinesLC : [],
         genericosLC : [],
-        wiki : []
+        wiki : [],
+        loading : false
     }
 
     consultarApi = async() => {
+        this.setState({loading: true})
         //consultas a cafam
         var arreglos = ''
         var arreglos2 = ''
@@ -82,8 +84,7 @@ export class ResultadoBD extends Component{
             arreglos2 = dataG[0]
         }
         ///////////////////////////////////////////////////////////////////////////////////////
-        
-
+    
         if (arraysCV > 1){
             for (var i = 0; i < arraysCV -1; i++) {
                 if (arreglosCV === ''){
@@ -111,7 +112,6 @@ export class ResultadoBD extends Component{
         else{
             arreglos2CV = dataGCV[0]
         }
-
          ///////////////////////////////////////////////////////////////////////////////////////
         
         if (arraysLC > 1){
@@ -144,10 +144,13 @@ export class ResultadoBD extends Component{
         //console.log(arreglosCV , arreglos2CV)
         //console.log(arreglosLC , arreglos2LC)
         //console.log(dataWiki)
-        this.setState( {medicines : arreglos, genericos : arreglos2, medicinesCV : arreglosCV, genericosCV : arreglos2CV,medicinesLC : arreglosLC, genericosLC : arreglos2LC, wiki: dataWiki })
+        setTimeout (() =>{
+            this.setState( {medicines : arreglos, genericos : arreglos2, medicinesCV : arreglosCV, genericosCV : arreglos2CV,medicinesLC : arreglosLC, genericosLC : arreglos2LC, wiki: dataWiki })
+            this.setState({loading : false});
 
+        }, 1000)
+        
     }
-
 
     sendMedicamento =(medicine,generico) => {
         this.setState({
@@ -159,6 +162,8 @@ export class ResultadoBD extends Component{
 
     
     mostrarMedicines = () => {
+        const {loading} = this.state;
+
         const medicines = this.props.medicines;
         if (medicines.length === 0) return  null;
 
@@ -188,7 +193,14 @@ export class ResultadoBD extends Component{
                         <tr key = {medicine.id}>
                             <td > {medicine.producto} </td>
                             <td> {medicine.generico} </td>
-                            <td>  <input type="submit"  onClick={() => this.sendMedicamento(medicine.producto,medicine.generico)} className ="btn btn-lg btn-info btn-block" value="Buscar en farmacias"/> </td>
+                            <td>  <button  onClick={() => this.sendMedicamento(medicine.producto,medicine.generico)} disabled= {loading}
+                                    className ="btn btn-lg btn-info btn-block" >
+                                    { loading && <i className="fa fa-refresh fa-spin"></i> }
+                                    { loading && <span> Buscando en famacias</span> }
+                                    { !loading && <span>  Buscar en famacias</span> }
+                                    </button>
+                                   
+                            </td>
 
                         </tr>
                     ))}

@@ -112,13 +112,18 @@ def cafam(medicamento):
                             precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
                             
                             for i in range(0,len(nombres)):
-                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i]}])
+                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i], "url" : url }  ])
                             
                             #result.append(jsonList)
                             return json.dumps(jsonList , indent = 1)
                             return 0
                         except:
                             print("La request tiene una pagina y fallo en esta sección")
+                            jsonList = []
+                            jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A",  "url" : url } )
+                            result.append(jsonList)
+                            return json.dumps(result , indent = 1)
+                            
                             return -1
 
                     else:
@@ -154,12 +159,16 @@ def cafam(medicamento):
                                     precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
                                     
                                     for i in range(0,len(nombres)):
-                                        jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                                        jsonList.append({"medicamento" : nombres[i], "precio" : precios[i],  "url" : url2 })
                                     
                                     result.append(jsonList)
                                     
                                 except:
                                     print("La request tiene bastantes productos y fallo en esta sección")
+                                    jsonList = []
+                                    jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A",   "url" : "N/A" })
+                                    result.append(jsonList)
+                                    return json.dumps(result , indent = 1)
                                     return -2
                     
                             else:
@@ -167,14 +176,18 @@ def cafam(medicamento):
                                 break
                 else:
                     #break
-                    print(sinResultados)
+                    #print(sinResultados)
                     jsonList = []
-                    jsonList.append({"medicamento" : "Sin Resultados", "precio" : "N/A" })
+                    jsonList.append({"medicamento" : "Sin Resultados", "precio" : "N/A",  "url" : "N/A" })
                     result.append(jsonList)
                     return json.dumps(result , indent = 1)
                    
             except:
                     print("La petición hecha no fue exitosa")
+                    jsonList = []
+                    jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A" })
+                    result.append(jsonList)
+                    return json.dumps(result , indent = 1)
                     return 3
         else:
             print("Error al cargar la pagina") 
@@ -182,6 +195,10 @@ def cafam(medicamento):
 
     except:
         print("Error desconocido al iniciar la petición")
+        jsonList = []
+        jsonList.append({"medicamento" : "La pagina no cargo correctamente, o tiene problemas tecnicos", "precio" : "N/A",  "url" : "N/A" })
+        result.append(jsonList)
+        return json.dumps(result , indent = 1)
         return 1
 
 
@@ -281,7 +298,7 @@ def cruzverde(medicamento):
                                     #print(nombres1)
 
                                     for i in range(0,len(precios)):
-                                        jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                                        jsonList.append({"medicamento" : nombres[i], "precio" : precios[i], "url": url2})
 
                                     result.append(jsonList)
   
@@ -291,6 +308,11 @@ def cruzverde(medicamento):
                             return 0
                         except:
                             print("La request tiene bastantes productos y fallo en esta sección")
+                            jsonList = []
+                            jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A", "url": "N/A" })
+                            result.append(jsonList)
+                            return json.dumps(result , indent = 1)
+
                             return -3
                     #cuando solo hay un medicamento
                     elif fichaTec != []:
@@ -312,13 +334,17 @@ def cruzverde(medicamento):
                                 precios1.append(precios[i])
 
                             for i in range(0,len(precios)):
-                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i]}])
+                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i], "url": url2  }])
                                     
                             return json.dumps(jsonList, indent = 1)
                            
                             #return 0
                         except:
                             print("La request tiene tiene entre 2 y 12 productos y fallo en esta sección")
+                            jsonList = []
+                            jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A", "url":"N/A" })
+                            result.append(jsonList)
+                            return json.dumps(result , indent = 1)
                             #return -2
                     #cuando hay solo una pagina
                     elif fichaTec == []:
@@ -341,22 +367,30 @@ def cruzverde(medicamento):
                                 precios1.append(precios[i])
                             
                             for i in range(0,len(precios)):
-                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i]}])
+                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i], "url": url2 }])
                                     
                             return json.dumps(jsonList, indent = 1)
 
                         except:
                             print("La request tiene un producto y fallo en esta sección")
+                            jsonList = []
+                            jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A", "url":"N/A" })
+                            result.append(jsonList)
+                            return json.dumps(result , indent = 1)
                             #return -1
                 else:
                     #print(sinResultados[0])
                     jsonList = []
-                    jsonList.append({"medicamento" : sinResultados[0], "precio" : "N/A" })
+                    jsonList.append({"medicamento" : "Sin resultados", "precio" : "N/A", "url":"N/A" })
                     result.append(jsonList)
                     return json.dumps(result , indent = 1)
             
             except:
                 print("La petición hecha no fue exitosa")
+                jsonList = []
+                jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A", "url":"N/A" })
+                result.append(jsonList)
+                return json.dumps(result , indent = 1)
                 #return 3
                           
         else:
@@ -366,6 +400,10 @@ def cruzverde(medicamento):
 
     except:
         print("Error desconocido al iniciar la petición")
+        jsonList = []
+        jsonList.append({"medicamento" : "Error desconocido al iniciar la petición", "precio" : "N/A", "url":"N/A" })
+        result.append(jsonList)
+        return json.dumps(result , indent = 1)
         #return 1
 
 
@@ -415,6 +453,7 @@ def locatel(medicamento):
     headers = {'User-Agent': user_agent}
 
     result = []
+    urlPrueba = "https://www.locatelcolombia.com/" + medicamento
     #----------------------------------------------------------------------------------------------------------
     proxies = get_proxies()
     proxy_pool = cycle(proxies)
@@ -449,7 +488,7 @@ def locatel(medicamento):
                                     precios1.append(precios[i])
 
                                 for i in range(0,len(precios)):
-                                    jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                                    jsonList.append({"medicamento" : nombres[i], "precio" : precios[i], "url": urlPrueba})
 
                                 result.append(jsonList)
                             else:
@@ -459,12 +498,15 @@ def locatel(medicamento):
                                 #return 0
                         except:
                             print("La request tiene bastantes productos y fallo en esta sección")
+                            jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A", "url":"N/A" })
+                            result.append(jsonList)
+                            return json.dumps(result, indent = 1)
                             return -3
 
                     elif str(pagina.content) == "b''":
                         #print(result)
                         if result == []:
-                            jsonList.append({"medicamento" : "Sin resultados en Locatel", "precio" : "N/A" })
+                            jsonList.append({"medicamento" : "Sin resultados en Locatel", "precio" : "N/A", "url":"N/A" })
                             result.append(jsonList)
                             return json.dumps(result, indent = 1)
                             
@@ -473,6 +515,10 @@ def locatel(medicamento):
                         break
                 except:
                     print("La petición hecha no fue exitosa")
+                    jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A",  "url":"N/A" })
+                    result.append(jsonList)
+                    return json.dumps(result, indent = 1)
+                    return 1
                     return 3
                 
             else:
@@ -480,19 +526,31 @@ def locatel(medicamento):
                 return 2
         except:
             print("Error desconocido al iniciar la petición")
+            jsonList.append({"medicamento" : "Error desconocido al iniciar la petición", "precio" : "N/A",  "url":"N/A" })
+            result.append(jsonList)
+            return json.dumps(result, indent = 1)
             return 1
 
 @app.route('/wiki/<medicamento>', methods = ['GET'])
 def wiki(medicamento):
     descripcion= []
-    wikipedia.set_lang("es")
-    parrafo = wikipedia.summary( medicamento, sentences=2)
+    try:
+        wikipedia.set_lang("es")
+        parrafo = wikipedia.summary( medicamento, sentences=2)
 
-    descripcion.append({
-            'medicamento': medicamento,
-            'descripcion': parrafo
-        })
-    return jsonify( descripcion)
+        descripcion.append({
+                'medicamento': medicamento,
+                'descripcion': parrafo
+            })
+        return jsonify( descripcion)
+        
+    except :
+        descripcion.append({
+                'medicamento': medicamento,
+                'descripcion': parrafo
+            })
+        return jsonify( descripcion)
+
 
 @app.route('/get_last_medicines', methods = ['GET'])
 def getlastmedicines():
@@ -526,19 +584,39 @@ def getmedicines():
 
 @app.route('/get_medicine/<medicamento>', methods = ['GET'])
 def getmedicine(medicamento):
-    medicines = []
+    coincidencias = []
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM medicines WHERE producto LIKE'+ '"' + medicamento +'%"')
     data = cur.fetchall()
-    print(data)
+    #print(data)
     if data != ():
         for medicine in data:
-            medicines.append({
+            #print(coincidencias)
+
+            if (coincidencias == []):
+                coincidencias.append({
                 'id': medicine[0],
                 'producto': medicine[1],
+                #'desComercial': medicine[10],
                 'generico': medicine[17]
-            })
-        return jsonify(medicines)
+                })
+
+            else:
+                if any(tag['producto'] == medicine[1] for tag in coincidencias):
+                    print("si hay un existente")
+
+                else:
+                    coincidencias.append({
+                    'id': medicine[0],
+                    'producto': medicine[1],
+                    'generico': medicine[17]
+                    })
+
+            
+        return jsonify(coincidencias)
+
+
+
     elif data == ():
         medicines.append({
             'id': "N/A",
@@ -547,9 +625,6 @@ def getmedicine(medicamento):
         })
         return jsonify(medicines)
 
-
-
-    
 
 
 
