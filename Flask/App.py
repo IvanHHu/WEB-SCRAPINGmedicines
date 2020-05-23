@@ -12,6 +12,7 @@ import traceback
 import random
 import json
 import wikipedia
+from operator import itemgetter, attrgetter
 
 app = Flask(__name__)
 
@@ -33,11 +34,15 @@ def cafam(medicamento):
         response = s.get(url)
         parser = fromstring(response.text)
         proxies = set()
-        for i in parser.xpath('//tbody/tr')[:10]:
-            if i.xpath('.//td[7][contains(text(),"yes")]'):
-                proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
-                proxies.add(proxy)
-        return proxies
+        try:
+            for i in parser.xpath('//tbody/tr')[:10]:
+                if i.xpath('.//td[7][contains(text(),"yes")]'):
+                    proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+                    proxies.add(proxy)
+            return proxies
+        except:
+            print("Error. Posible proxie bloqueado")
+       
     #----------------------------------------------------------------------------------------------------
 
     user_agent_list = [
@@ -72,9 +77,12 @@ def cafam(medicamento):
     headers = {'User-Agent': user_agent}
 
     #----------------------------------------------------------------------------------------------------------
-    proxies = get_proxies()
-    proxy_pool = cycle(proxies)
-    proxy = next(proxy_pool)
+    try:
+        proxies = get_proxies()
+        proxy_pool = cycle(proxies)
+        proxy = next(proxy_pool)
+    except:
+        print("Error. Posible proxie bloqueado")
 
     result = []
     url = "https://www.drogueriascafam.com.co/buscar?search_query=" + medicamento + "&controller=search&orderby=position&orderway=desc"
@@ -90,32 +98,104 @@ def cafam(medicamento):
                 if sinResultados ==[]:
 
                     indPag = txtHtml.xpath("//div[@class='clearfix selector1']/span[1]/text()")
-                    #print (indPag)
+                    #print (indPag)// cuando solo hay una pagina
                     if indPag == []:
                         try:
                             jsonList = []
                             nombres = txtHtml.xpath("//span[@class='grid-name']/text()")
                     
                             prec1 = txtHtml.xpath("//div[@class='columns-container']//li[1]//div[1]//div[2]//span[1]/text()")
+                            if prec1 != []:
+                                prec1[0] = prec1[0].replace(" $ ", "")
+                                prec1[0] = prec1[0].replace(" ", "")
+                                prec1[0] = prec1[0].replace(",", "")
+                                prec1[0] = int(prec1[0])    
                             prec2 = txtHtml.xpath("//div[@class='columns-container']//li[2]//div[1]//div[2]//span[1]/text()")
+                            if prec2 != []:
+                                prec2[0] = prec2[0].replace(" $ ", "")
+                                prec2[0] = prec2[0].replace(" ", "")
+                                prec2[0] = prec2[0].replace(",", "")
+                                prec2[0] = int(prec2[0])    
                             prec3 = txtHtml.xpath("//div[@class='columns-container']//li[3]//div[1]//div[2]//span[1]/text()")
+                            if prec3 != []:
+                                prec3[0] = prec3[0].replace(" $ ", "")
+                                prec3[0] = prec3[0].replace(" ", "")
+                                prec3[0] = prec3[0].replace(",", "")
+                                prec3[0] = int(prec3[0])    
                             prec4 = txtHtml.xpath("//div[@class='columns-container']//li[4]//div[1]//div[2]//span[1]/text()")
+                            if prec4 != []:
+                                prec4[0] = prec4[0].replace(" $ ", "")
+                                prec4[0] = prec4[0].replace(" ", "")
+                                prec4[0] = prec4[0].replace(",", "")
+                                prec4[0] = int(prec4[0])    
                             prec5 = txtHtml.xpath("//div[@class='columns-container']//li[5]//div[1]//div[2]//span[1]/text()")
+                            if prec5 != []:
+                                prec5[0] = prec5[0].replace(" $ ", "")
+                                prec5[0] = prec5[0].replace(" ", "")
+                                prec5[0] = prec5[0].replace(",", "")
+                                prec5[0] = int(prec5[0])    
                             prec6 = txtHtml.xpath("//div[@class='columns-container']//li[6]//div[1]//div[2]//span[1]/text()")
+                            if prec6 != []:
+                                prec6[0] = prec6[0].replace(" $ ", "")
+                                prec6[0] = prec6[0].replace(" ", "")
+                                prec6[0] = prec6[0].replace(",", "")
+                                prec6[0] = int(prec6[0])    
                             prec7 = txtHtml.xpath("//div[@class='columns-container']//li[7]//div[1]//div[2]//span[1]/text()")
+                            if prec7 != []:
+                                prec7[0] = prec7[0].replace(" $ ", "")
+                                prec7[0] = prec7[0].replace(" ", "")
+                                prec7[0] = prec7[0].replace(",", "")
+                                prec7[0] = int(prec7[0])    
                             prec8 = txtHtml.xpath("//div[@class='columns-container']//li[8]//div[1]//div[2]//span[1]/text()")
+                            if prec8 != []:
+                                prec8[0] = prec8[0].replace(" $ ", "")
+                                prec8[0] = prec8[0].replace(" ", "")
+                                prec8[0] = prec8[0].replace(",", "")
+                                prec8[0] = int(prec8[0])    
                             prec9 = txtHtml.xpath("//div[@class='columns-container']//li[9]//div[1]//div[2]//span[1]/text()")
+                            if prec9 != []:
+                                prec9[0] = prec9[0].replace(" $ ", "")
+                                prec9[0] = prec9[0].replace(" ", "")
+                                prec9[0] = prec9[0].replace(",", "")
+                                prec9[0] = int(prec9[0])    
                             prec10 = txtHtml.xpath("//div[@class='columns-container']//li[10]//div[1]//div[2]//span[1]/text()")
+                            if prec10 != []:
+                                prec10[0] = prec10[0].replace(" $ ", "")
+                                prec10[0] = prec10[0].replace(" ", "")
+                                prec10[0] = prec10[0].replace(",", "")
+                                prec10[0] = int(prec10[0])    
                             prec11 = txtHtml.xpath("//div[@class='columns-container']//li[11]//div[1]//div[2]//span[1]/text()")
+                            if prec11 != []:
+                                prec11[0] = prec11[0].replace(" $ ", "")
+                                prec11[0] = prec11[0].replace(" ", "")
+                                prec11[0] = prec11[0].replace(",", "")
+                                prec11[0] = int(prec11[0])    
                             prec12 = txtHtml.xpath("//div[@class='columns-container']//li[12]//div[1]//div[2]//span[1]/text()")
-                            
+                            if prec12 != []:
+                                prec12[0] = prec12[0].replace(" $ ", "")
+                                prec12[0] = prec12[0].replace(" ", "")
+                                prec12[0] = prec12[0].replace(",", "")
+                                prec12[0] = int(prec12[0])    
+                    
                             precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
                             
                             for i in range(0,len(nombres)):
-                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i], "url" : url }  ])
+                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i], "url": url }])
                             
-                            #result.append(jsonList)
-                            return json.dumps(jsonList , indent = 1)
+                            #print(json.dumps(jsonList, indent = 1))
+                            #print(jsonList)
+                            newjson = []
+                            for i in range(1,len(jsonList)):
+                                if newjson == []:
+                                    newjson = jsonList[0] + jsonList[i ]
+                                else:
+                                    newjson = newjson + jsonList[i]
+                                    if i == len(jsonList):
+                                        newjson.append(newjson)
+
+                            sorted_obj = sorted(newjson, key=lambda x : x['precio'], reverse=False)
+
+                            return json.dumps(sorted_obj , indent = 1)
                             return 0
                         except:
                             print("La request tiene una pagina y fallo en esta sección")
@@ -144,35 +224,116 @@ def cafam(medicamento):
                                     nombres = txtHtml2.xpath("//span[@class='grid-name']/text()")
                     
                                     prec1 = txtHtml2.xpath("//div[@class='columns-container']//li[1]//div[1]//div[2]//span[1]/text()")
+                                    if prec1 != []:
+                                        prec1[0] = prec1[0].replace(" $ ", "")
+                                        prec1[0] = prec1[0].replace(" ", "")
+                                        prec1[0] = prec1[0].replace(",", "")
+                                        prec1[0] = int(prec1[0])    
+                                    #print (type(prec1[0]))
                                     prec2 = txtHtml2.xpath("//div[@class='columns-container']//li[2]//div[1]//div[2]//span[1]/text()")
+                                    if prec2 != []:
+                                        prec2[0] = prec2[0].replace(" $ ", "")
+                                        prec2[0] = prec2[0].replace(" ", "")
+                                        prec2[0] = prec2[0].replace(",", "")
+                                        prec2[0] = int(prec2[0])  
                                     prec3 = txtHtml2.xpath("//div[@class='columns-container']//li[3]//div[1]//div[2]//span[1]/text()")
+                                    if prec3 != []:
+                                        prec3[0] = prec3[0].replace(" $ ", "")
+                                        prec3[0] = prec3[0].replace(" ", "")
+                                        prec3[0] = prec3[0].replace(",", "")
+                                        prec3[0] = int(prec3[0])  
                                     prec4 = txtHtml2.xpath("//div[@class='columns-container']//li[4]//div[1]//div[2]//span[1]/text()")
+                                    if prec4 != []:
+                                        prec4[0] = prec4[0].replace(" $ ", "")
+                                        prec4[0] = prec4[0].replace(" ", "")
+                                        prec4[0] = prec4[0].replace(",", "")
+                                        prec4[0] = int(prec4[0])  
+                                   
                                     prec5 = txtHtml2.xpath("//div[@class='columns-container']//li[5]//div[1]//div[2]//span[1]/text()")
+                                    if prec5 != []:
+                                        prec5[0] = prec5[0].replace(" $ ", "")
+                                        prec5[0] = prec5[0].replace(" ", "")
+                                        prec5[0] = prec5[0].replace(",", "")
+                                        prec5[0] = int(prec5[0])  
+
                                     prec6 = txtHtml2.xpath("//div[@class='columns-container']//li[6]//div[1]//div[2]//span[1]/text()")
+                                    if prec6 != []:
+                                        prec6[0] = prec6[0].replace(" $ ", "")
+                                        prec6[0] = prec6[0].replace(" ", "")
+                                        prec6[0] = prec6[0].replace(",", "")
+                                        prec6[0] = int(prec6[0])  
+
                                     prec7 = txtHtml2.xpath("//div[@class='columns-container']//li[7]//div[1]//div[2]//span[1]/text()")
+                                    if prec7 != []:
+                                        prec7[0] = prec7[0].replace(" $ ", "")
+                                        prec7[0] = prec7[0].replace(" ", "")
+                                        prec7[0] = prec7[0].replace(",", "")
+                                        prec7[0] = int(prec7[0])  
+
                                     prec8 = txtHtml2.xpath("//div[@class='columns-container']//li[8]//div[1]//div[2]//span[1]/text()")
+                                    if prec8 != []:
+                                        prec8[0] = prec8[0].replace(" $ ", "")
+                                        prec8[0] = prec8[0].replace(" ", "")
+                                        prec8[0] = prec8[0].replace(",", "")
+                                        prec8[0] = int(prec8[0])  
+
                                     prec9 = txtHtml2.xpath("//div[@class='columns-container']//li[9]//div[1]//div[2]//span[1]/text()")
+                                    if prec9 != []:
+                                        prec9[0] = prec9[0].replace(" $ ", "")
+                                        prec9[0] = prec9[0].replace(" ", "")
+                                        prec9[0] = prec9[0].replace(",", "")
+                                        prec9[0] = int(prec9[0])  
+
                                     prec10 = txtHtml2.xpath("//div[@class='columns-container']//li[10]//div[1]//div[2]//span[1]/text()")
+                                    if prec10 != []:
+                                        prec10[0] = prec10[0].replace(" $ ", "")
+                                        prec10[0] = prec10[0].replace(" ", "")
+                                        prec10[0] = prec10[0].replace(",", "")
+                                        prec10[0] = int(prec10[0])  
+
                                     prec11 = txtHtml2.xpath("//div[@class='columns-container']//li[11]//div[1]//div[2]//span[1]/text()")
+                                    if prec11 != []:
+                                        prec11[0] = prec11[0].replace(" $ ", "")
+                                        prec11[0] = prec11[0].replace(" ", "")
+                                        prec11[0] = prec11[0].replace(",", "")
+                                        prec11[0] = int(prec11[0])  
                                     prec12 = txtHtml2.xpath("//div[@class='columns-container']//li[12]//div[1]//div[2]//span[1]/text()")
+                                    if prec12 != []:
+                                        prec12[0] = prec12[0].replace(" $ ", "")
+                                        prec12[0] = prec12[0].replace(" ", "")
+                                        prec12[0] = prec12[0].replace(",", "")
+                                        prec12[0] = int(prec12[0])  
+                                    
                                     
                                     precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
-                                    
+                                    print(precios)
                                     for i in range(0,len(nombres)):
                                         jsonList.append({"medicamento" : nombres[i], "precio" : precios[i],  "url" : url2 })
                                     
                                     result.append(jsonList)
                                     
+                                    
                                 except:
                                     print("La request tiene bastantes productos y fallo en esta sección")
-                                    jsonList = []
-                                    jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A",   "url" : "N/A" })
+                                    jsonList == []
+                                    jsonList.append({"medicamento" : "La petición hecha no fue exitosa, posible error en una pagina de productos", "precio" : "N/A",   "url" : "N/A" })
                                     result.append(jsonList)
                                     return json.dumps(result , indent = 1)
                                     return -2
                     
                             else:
-                                return json.dumps(result , indent = 1)
+                                #orden de precios
+                                newjson = []
+                                for i in range(1,len(result)):
+                                    if newjson == []:
+                                        newjson = result[0] + result[i ]
+                                    else:
+                                        newjson = newjson + result[i]
+                                        if i == len(result):
+                                            newjson.append(newjson)
+                                
+                                sorted_obj = sorted(newjson, key=lambda x : x['precio'], reverse=False)
+                                return json.dumps(sorted_obj , indent = 1)
                                 break
                 else:
                     #break
@@ -196,7 +357,7 @@ def cafam(medicamento):
     except:
         print("Error desconocido al iniciar la petición")
         jsonList = []
-        jsonList.append({"medicamento" : "La pagina no cargo correctamente, o tiene problemas tecnicos", "precio" : "N/A",  "url" : "N/A" })
+        jsonList.append({"medicamento" : "La pagina no cargo correctamente, tiene problemas tecnicos o hay un proxie bloqueado. Intentelo mas tarde.", "precio" : "N/A",  "url" : "N/A" })
         result.append(jsonList)
         return json.dumps(result , indent = 1)
         return 1
@@ -414,11 +575,14 @@ def locatel(medicamento):
         response = s.get(url)
         parser = fromstring(response.text)
         proxies = set()
-        for i in parser.xpath('//tbody/tr')[:10]:
-            if i.xpath('.//td[7][contains(text(),"yes")]'):
-                proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
-                proxies.add(proxy)
-        return proxies
+        try:
+            for i in parser.xpath('//tbody/tr')[:10]:
+                if i.xpath('.//td[7][contains(text(),"yes")]'):
+                    proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+                    proxies.add(proxy)
+            return proxies
+        except:
+            print("Error. Proxie bloqueado")
     
     #----------------------------------------------------------------------------------------------------
     user_agent_list = [
@@ -485,6 +649,10 @@ def locatel(medicamento):
                                 for i in range(0,len(precios)):
                                     precios[i] = precios[i].replace("\n                ", "")
                                     precios[i] = precios[i].replace("\n            ", "")
+                                    precios[i] = precios[i].replace("$", "")
+                                    precios[i] = precios[i].replace(".", "")
+                                    precios[i] = precios[i].replace(",", ".")
+                                    precios[i] = float(precios[i])  
                                     precios1.append(precios[i])
 
                                 for i in range(0,len(precios)):
@@ -509,8 +677,26 @@ def locatel(medicamento):
                             jsonList.append({"medicamento" : "Sin resultados en Locatel", "precio" : "N/A", "url":"N/A" })
                             result.append(jsonList)
                             return json.dumps(result, indent = 1)
+
+                        #print(len(result))
+                        if len(result) > 1:
+                            newjson = []
+                            for i in range(1,len(result)):
+                                if newjson == []:
+                                    newjson = result[0] + result[i]
+                                    #print(newjson)
+                                else:
+                                    newjson = newjson + result[i]
+                                    #print(newjson)
+                                    if i == len(result):
+                                        newjson.append(newjson)
                             
-                        return json.dumps(result, indent = 1)
+                            sorted_obj = sorted(newjson, key=lambda x : x['precio'], reverse=False)
+                            return json.dumps(sorted_obj, indent = 1)
+
+                        else:
+                            sorted_obj = sorted(result[0], key=lambda x : x['precio'], reverse=False)
+                            return json.dumps(sorted_obj, indent = 1)
                         
                         break
                 except:

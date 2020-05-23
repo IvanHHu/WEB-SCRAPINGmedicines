@@ -95,7 +95,7 @@ def main(medicamento):
                             precios = prec1 + prec2 + prec3 + prec4 + prec5 + prec6 + prec7 + prec8 + prec9 + prec10 + prec11 + prec12
                             
                             for i in range(0,len(nombres)):
-                                jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                                jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i], "url": url }])
                             
                             print(json.dumps(jsonList, indent = 1))
 
