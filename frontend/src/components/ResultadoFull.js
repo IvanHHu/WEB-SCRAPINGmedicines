@@ -23,14 +23,14 @@ export class ResultadoFull extends Component{
         if (wiki.length === 0) return  null;
 
 
-        //console.log(medicines);
-        //console.log(genericos);
+        console.log(medicines);
+        console.log(genericos);
 
-        //console.log(medicinesCV);
-        //console.log(genericosCV);
+        console.log(medicinesCV);
+        console.log(genericosCV);
 
-        //console.log(medicinesLC);
-        //console.log(genericosLC);
+        console.log(medicinesLC);
+        console.log(genericosLC);
         console.log(wiki);
 
         return(
@@ -122,6 +122,11 @@ export class ResultadoFull extends Component{
                         <tr key = {medicineCV.medicamento }>
                             <td> {medicineCV.medicamento} </td>
                             <td> {medicineCV.precio} </td>
+                            <td>
+                                 <a href={medicineCV.url}>
+                                    <input type="button" value="Ir"  className ="btn btn-lg btn-info btn-block"  />
+                                </a>
+                            </td>
 
                         </tr>
                     ))}
@@ -145,6 +150,11 @@ export class ResultadoFull extends Component{
                         <tr key = {genericoCV.medicamento }>
                             <td> {genericoCV.medicamento} </td>
                             <td> {genericoCV.precio} </td>
+                            <td>
+                                 <a href={genericoCV.url}>
+                                    <input type="button" value="Ir"  className ="btn btn-lg btn-info btn-block"  />
+                                </a>
+                            </td>
 
                         </tr>
                     ))}

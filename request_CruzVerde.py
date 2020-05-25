@@ -93,7 +93,8 @@ def main(medicamento):
                         nombres1 = []
                         precios1 = []
                         nombres = txtHtml2.xpath("//a[@class='link']/text()")
-                        precios = txtHtml2.xpath("//span[@class='value pr-2']/text()")
+                        #precios sin oferta    #precios = txtHtml2.xpath("//span[@class='value pr-2']/text()")
+                        precios = txtHtml2.xpath("//span[@class='value']/text()")
                         
                         for i in range(0,len(nombres)):
                             nombres[i] = nombres[i].replace("\n        \n            ", "")
@@ -102,15 +103,37 @@ def main(medicamento):
                             
                         
                         for i in range(0,len(precios)):
+                            precios[i] = precios[i].replace("\n                \n                \n                    ", "")
+                            precios[i] = precios[i].replace("\n\n\n                    \n                        (Oferta)\n                    \n                \n                ", "" )
+                            precios[i] = precios[i].replace("\n                    ", "")
+                            precios[i] = precios[i].replace("\n\n                    \n                    ", "")
+                            precios[i] = precios[i].replace("\n                ", "")
                             precios[i] = precios[i].replace("\n                    ", "")
                             precios[i] = precios[i].replace("\n                ", "")
-                            precios1.append(precios[i])
+                            precios[i] = precios[i].replace("\n", "")
+                            precios[i] = precios[i].replace("$", "")
+                            precios[i] = precios[i].replace(".", "")
+                            #precios[i] = float(precios[i])
+
+                            if precios[i] != '':
+                                precios1.append(precios[i])
+                            
+                        for i in range(0,len(precios1)):
+                            precios1[i] = float(precios1[i])
+
+                            
+
+                        ############################## Replaces     
+                         #   precios[i] = precios[i].replace("\n                    ", "")
+                          #  precios[i] = precios[i].replace("\n                ", "")
+                           # precios1.append(precios[i])
 
                         #print(nombres1)
                         #print(precios1)
 
-                        for i in range(0,len(precios)):
-                            jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+                        for i in range(0,len(nombres)):
+                            jsonList.append({"medicamento" : nombres[i], "precio" : precios1[i]})
+                            
                         
                         print(json.dumps(jsonList, indent = 1))
 
@@ -137,6 +160,7 @@ def main(medicamento):
                     nombres1.append(nombres[i])
                     precios1.append(precios[i])
 
+                
                 for i in range(0,len(nombres)):
                     jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
                         
@@ -151,26 +175,65 @@ def main(medicamento):
             #try:
                 jsonList = []
                 nombres1 = []
-                precios1 = []
+                precios2 = []
                 nombres = txtHtml.xpath("//a[@class='link']/text()")
-                precios = txtHtml.xpath("//span[@class='value pr-2']/text()")
-
                 for i in range(0,len(nombres)):
                     nombres[i] = nombres[i].replace("\n        \n            ", "")
                     nombres[i] = nombres[i].replace("\n        \n    ", "")
-                    precios[i] = precios[i].replace("\n                    ", "")
-                    precios[i] = precios[i].replace("\n                ", "")
                     nombres1.append(nombres[i])
-                    precios1.append(precios[i])
+
+
+                precios = txtHtml.xpath("//span[@class='value pr-2']/text()")
+                for i in range(0,len(precios)):
+                    if precios != []:
+                        precios[i] = precios[i].replace("\n                    ", "")
+                        precios[i] = precios[i].replace("\n                ", "")
+                        precios[i] = precios[i].replace("$", "")
+                        precios[i] = precios[i].replace(".", "")
+                        precios2.append(precios[i])
                 
-                for i in range(0,len(nombres)):
-                    jsonList.append({"medicamento" : nombres[i], "precio" : precios[i]})
+
+                preciosOferta = txtHtml.xpath("//span[@class='value']/text()")
+                preciosOferta2= []
+                if preciosOferta != []:        
+                    #print(preciosOferta)
+                    for i in range(0,len(preciosOferta)):
+                        preciosOferta[i] = preciosOferta[i].replace("\n                \n                \n                    ", "")
+                        preciosOferta[i] = preciosOferta[i].replace("\n\n\n                    \n                        (Oferta)\n                    \n                \n                ", "" )
+                        preciosOferta[i] = preciosOferta[i].replace("\n                    ", "")
+                        preciosOferta[i] = preciosOferta[i].replace("\n\n                    \n                    ", "")
+                        preciosOferta[i] = preciosOferta[i].replace("\n                ", "")
+                        preciosOferta[i] = preciosOferta[i].replace("\n                    ", "")
+                        preciosOferta[i] = preciosOferta[i].replace("\n                ", "")
+                        preciosOferta[i] = preciosOferta[i].replace("\n", "")
+                        preciosOferta[i] = preciosOferta[i].replace("$", "")
+                        preciosOferta[i] = preciosOferta[i].replace(".", "")
+                        preciosOferta[i] = preciosOferta[i].replace("                                    ", "")
                         
+                        if preciosOferta[i] != '':
+                            preciosOferta2.append(preciosOferta[i])
+
+
+                preciosFull = precios2 + preciosOferta2
+                
+                #print(len(preciosFull)-1)
+
+                for i in range(0,len(preciosFull)):
+                    preciosFull[i] = float(preciosFull[i])
+
+                print(nombres1)
+                print(preciosFull)
+
+
+                for i in range(0,len(nombres1)):
+                    jsonList.append([{"medicamento" : nombres1[0], "precio" : preciosFull[0], "url": url2 } ])
+
+
+                #result.append(jsonList)
+                
                 print(json.dumps(jsonList, indent = 1))
 
-            # except:
-            #    print("La request tiene un producto y fallo en esta sección")
-                #   return -1
+                            #return json.dumps(result, indent = 1)
         else:
             print(sinResultados[0])
             jsonList = []
