@@ -55,24 +55,17 @@ export class ResultadoBD extends Component{
         const resWiki  =  await fetch(`${API}/wiki/`+ this.state.generico)
         const dataWiki = await resWiki.json();
 
-
-      
         arreglos = data
-    
         arreglos2 = dataG
-    
         arreglosCV = dataCV
-    
         arreglos2CV = dataGCV
-    
         arreglosLC = dataLC
-    
         arreglos2LC = dataGLC
         
-        //console.log(arreglos , arreglos2)
-        //console.log(arreglosCV , arreglos2CV)
-        //console.log(arreglosLC , arreglos2LC)
-        //console.log(dataWiki)
+        console.log(arreglos , arreglos2)
+        console.log(arreglosCV , arreglos2CV)
+        console.log(arreglosLC , arreglos2LC)
+        console.log(dataWiki)
 
         setTimeout (() =>{
             this.setState( {medicines : arreglos, genericos : arreglos2, medicinesCV : arreglosCV, genericosCV : arreglos2CV,medicinesLC : arreglosLC, genericosLC : arreglos2LC, wiki: dataWiki })

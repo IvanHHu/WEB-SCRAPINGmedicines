@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {SearchBD} from './SearchBD'
+import { SearchPre } from './SearchPre';
 
 
 const API = process.env.REACT_APP_API;
@@ -22,7 +23,7 @@ export const Medicines = () =>{
 
     return (
         <div>
-            <SearchBD/>
+            <SearchPre/>
 
             <br></br> 
             <br></br>

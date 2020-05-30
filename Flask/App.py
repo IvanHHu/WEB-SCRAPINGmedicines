@@ -185,26 +185,26 @@ def cafam(medicamento):
                             for i in range(0,len(nombres)):
                                 if caracteres[' '] > 1:
                                     coincidencia = SM(None, medicamento, nombres[i]).ratio()
-                                    if coincidencia >= 0.2:
-
-                                        jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i], "url": url }])
+                                    if coincidencia >= 0.1:
+                                        print(coincidencia)
+                                        jsonList.append({"medicamento" : nombres[i], "precio" : precios[i], "url": url })
                                 else:
 
-                                    jsonList.append([{"medicamento" : nombres[i], "precio" : precios[i], "url": url }])
+                                    jsonList.append({"medicamento" : nombres[i], "precio" : precios[i], "url": url })
                             
                             
                             newjson = []
-                            for i in range(1,len(jsonList)):
-                                if newjson == []:
-                                    newjson = jsonList[0] + jsonList[i ]
-                                else:
-                                    newjson = newjson + jsonList[i]
-                                    if i == len(jsonList):
-                                        newjson.append(newjson)
+                            print(jsonList)
 
-                            sorted_obj = sorted(newjson, key=lambda x : x['precio'], reverse=False)
+                            if len(jsonList) == 1:
+                                #newjson.append(jsonList)
+                                return json.dumps(jsonList , indent = 1)
+                           
+
+                            sorted_obj = sorted(jsonList, key=lambda x : x['precio'], reverse=False)
 
                             return json.dumps(sorted_obj , indent = 1)
+
                             return 0
                         except:
                             print("La request tiene una pagina y fallo en esta sección")
@@ -367,8 +367,8 @@ def cafam(medicamento):
                     #print(sinResultados)
                     jsonList = []
                     jsonList.append({"medicamento" : "Sin Resultados", "precio" : "N/A",  "url" : "N/A" })
-                    result.append(jsonList)
-                    return json.dumps(result , indent = 1)
+                    #result.append(jsonList)
+                    return json.dumps(jsonList , indent = 1)
                    
             except:
                     print("La petición hecha no fue exitosa")
@@ -525,8 +525,8 @@ def cruzverde(medicamento):
                                     for i in range(0,len(preciosFull)):
                                         if caracteres[' '] > 1:
                                             coincidencia = SM(None, medicamento, nombres[i]).ratio()
-                                            print(coincidencia)
-                                            if coincidencia >= 0.2:
+                                            #print(coincidencia)
+                                            if coincidencia >= 0.1:
                                                 jsonList.append({"medicamento" : nombres[i], "precio" : preciosFull[i], "url": url2})
 
                                         else:
@@ -535,6 +535,11 @@ def cruzverde(medicamento):
                                     result.append(jsonList)
   
                                 else :
+
+                                    if jsonList == []:
+                                        jsonList.append({"medicamento" : "Sin resultados", "precio" : "N/A", "url":"N/A" })
+                                        return json.dumps(jsonList, indent = 1)
+
                                     #print(result)
                                     newjson = []
                                     for i in range(1,len(result)):
@@ -668,35 +673,36 @@ def cruzverde(medicamento):
 
                             preciosFull = precios2 + preciosOferta2
                             caracteres = Counter(medicamento)
-                            print(caracteres)
+                            #printprint(caracteres)
                             #print(len(preciosFull)-1)
 
                             for i in range(0,len(preciosFull)):
                                 preciosFull[i] = float(preciosFull[i])
 
+                            #print(len(nombres1))
+                            for i in range(0,len(nombres1)):
+                                if nombres1[i] != []:
+                                    if caracteres[' '] == 0:
+                                        jsonList.append({"medicamento" : nombres1[i], "precio" : preciosFull[i], "url": url })
+                                    else:
+                                        coincidencia = SM(None, medicamento, nombres1[i]).ratio()
+                                        print(coincidencia)
+                                        if coincidencia >= 0.2:
+                                            jsonList.append({"medicamento" : nombres1[i], "precio" : preciosFull[i], "url": url })
 
-                            for i in range(0,len(nombres1)-1):
-                                if caracteres[' '] == 0:
-                                    jsonList.append([{"medicamento" : nombres1[i], "precio" : preciosFull[i], "url": url }])
-                                else:
-                                    coincidencia = SM(None, medicamento, nombres1[i]).ratio()
-                                    print(coincidencia)
-                                    if coincidencia >= 0.2:
-                                        jsonList.append([{"medicamento" : nombres1[i], "precio" : preciosFull[i], "url": url }])
+
+                            print(jsonList)
+
+                            if jsonList == []:
+                                jsonList.append({"medicamento" : "Sin resultados", "precio" : "N/A", "url":"N/A" })
+                                return json.dumps(jsonList, indent = 1)
 
 
-                            newjson = []
-                            for i in range(1,len(jsonList)):
-                                if newjson == []:
-                                    newjson = jsonList[0] + jsonList[i]
-                                else:
-                                    newjson = newjson + jsonList[i]
-                                    if i == len(jsonList):
-                                        newjson.append(newjson)
+                            else:
+                                sorted_obj = sorted(jsonList, key=lambda x : x['precio'], reverse=False)
+                                print(sorted_obj)
 
-                            sorted_obj = sorted(newjson, key=lambda x : x['precio'], reverse=False)
-
-                            return json.dumps(sorted_obj , indent = 1)
+                                return json.dumps(sorted_obj , indent = 1)
 
 
                             #return json.dumps(jsonList, indent = 1)
@@ -840,11 +846,11 @@ def locatel(medicamento):
                                     else:
                                         jsonList.append({"medicamento" : nombres[i], "precio" : precios[i], "url": urlPrueba})
 
-
+                                #print(jsonList)
                                 result.append(jsonList)
                             else:
                                 print(sinResultados[0] + "... No hay esultados")
-                                
+                                #print(result)
                                 return json.dumps(result , indent = 1)
                                 #return 0
                         except:
@@ -856,18 +862,23 @@ def locatel(medicamento):
 
                     elif str(pagina.content) == "b''":
                         #print(result)
-                        if jsonList == []:
-                            #result= []
-                            jsonList.append({"medicamento" : "Sin resultados en Locatel", "precio" : "N/A", "url":"N/A" })
+                        #if jsonList == []:
+                            #jsonList.append({"medicamento" : "Sin resultados en Locatel", "precio" : "N/A", "url":"N/A" })
+                            #return json.dumps(jsonList, indent = 1)
+                        #print(result)
+
+                        if result == []:
+                            jsonList.append({"medicamento" : "Sin resultados en Locatel", "precio" : "N/A", "url": "N/A" })
+                            #result.append(jsonList)
+                            return json.dumps(jsonList, indent = 1)
+                        
+                        if result[0] == []:
+                            jsonList =  []
+                            jsonList.append({"medicamento" : "Sin resultados en Locatel", "precio" : "N/A", "url": "N/A" })
                             #result.append(jsonList)
                             return json.dumps(jsonList, indent = 1)
 
-                        if result == []:
-                            jsonList.append({"medicamento" : "Sin resultados en Locatel", "precio" : "N/A", "url":"N/A" })
-                            result.append(jsonList)
-                            return json.dumps(result, indent = 1)
-
-                        #print(len(result))
+                        
                         if len(result) > 1:
                             newjson = []
                             for i in range(1,len(result)):
@@ -898,6 +909,7 @@ def locatel(medicamento):
                 
             else:
                 print("Error al cargar la pagina")
+
                 return 2
         except:
             print("Error desconocido al iniciar la petición")
@@ -922,7 +934,7 @@ def wiki(medicamento):
     except :
         descripcion.append({
                 'medicamento': medicamento,
-                'descripcion': parrafo
+                'descripcion': "Sin resultados en wikipedia"
             })
         return jsonify( descripcion)
 
@@ -978,7 +990,7 @@ def getmedicine(medicamento):
 
             else:
                 if any(tag['producto'] == medicine[1] for tag in coincidencias):
-                    print("si hay un existente")
+                    print("si hay un producto existente")
 
                 else:
                     coincidencias.append({
@@ -993,13 +1005,86 @@ def getmedicine(medicamento):
 
 
     elif data == ():
-        medicines.append({
+        coincidencias.append({
             'id': "N/A",
             'producto': "No contamos con el medicamento en nuestros datos. Puede buscar directamente el medicamento en la seccion Search",
             'generico': "N/A"
         })
-        return jsonify(medicines)
+        return jsonify(coincidencias)
 
+@app.route('/get_medicine2/<medicamento>', methods = ['GET'])
+def getmedicine2(medicamento):
+    coincidencias = []
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM medicines2 WHERE producto LIKE'+ '"' + medicamento +'%"')
+    data = cur.fetchall()
+    #print(data)
+    if data != ():
+        for medicine in data:
+            #print(coincidencias)
+            if (coincidencias == []):
+                coincidencias.append({
+                'id': medicine[0],
+                'producto': medicine[1],
+                'generico': medicine[3]
+                })
+            else:
+                if any(tag['producto'] == medicine[1] for tag in coincidencias):
+                    print("si hay un producto existente")
+                else:
+                    coincidencias.append({
+                    'id': medicine[0],
+                    'producto': medicine[1],
+                    'generico': medicine[3]
+                    })
+        return jsonify(coincidencias)
+    elif data == ():
+        coincidencias.append({
+            'id': "N/A",
+            'producto': "No contamos con el medicamento en nuestros datos. Puede buscar directamente el medicamento en la seccion Search"
+        })
+        return jsonify(coincidencias)
+
+@app.route('/get_medicine3/<medicamento>', methods = ['GET'])
+def getmedicine3(medicamento):
+    coincidencias = []
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT id, presentacion from medicines2 WHERE producto LIKE' '"' + medicamento +'%"')
+    data = cur.fetchall()
+    #print(data)
+    if data != ():
+        for medicine in data:
+            #print(coincidencias)
+
+            if (coincidencias == []):
+                coincidencias.append({
+                'id': medicine[0],
+                'presentacion': medicine[1]
+                #'desComercial': medicine[10],
+                })
+
+            else:
+                if any(tag['id'] == medicine[0] for tag in coincidencias):
+                    print("si hay un producto existente")
+
+                else:
+                    coincidencias.append({
+                    'id': medicine[0],
+                    'presentacion': medicine[1]
+                    })
+
+            
+        return jsonify(coincidencias)
+
+
+
+    elif data == ():
+        coincidencias.append({
+            'id': "N/A",
+            'producto': "No contamos con el medicamento en nuestros datos. Puede buscar directamente el medicamento en la seccion Search",
+            'generico': "N/A"
+        })
+        return jsonify(coincidencias)
 
 
 
