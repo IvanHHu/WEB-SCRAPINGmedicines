@@ -516,9 +516,12 @@ def cruzverde(medicamento):
                                                 preciosOferta2.append(preciosOferta[i])
 
                                     preciosFull = precios2 + preciosOferta2
+                                    print(precios2)
+                                    print(preciosOferta2)
 
                                     for i in range(0,len(preciosFull)):
                                        preciosFull[i] = float(preciosFull[i])
+                                    
                                     
                                     caracteres = Counter(medicamento)
 
@@ -533,6 +536,7 @@ def cruzverde(medicamento):
                                             jsonList.append({"medicamento" : nombres[i], "precio" : preciosFull[i], "url": url2})
 
                                     result.append(jsonList)
+                                    
   
                                 else :
 
