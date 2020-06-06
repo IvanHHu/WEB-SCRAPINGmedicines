@@ -27,7 +27,7 @@ mysql = MySQL(app)
 
 CORS(app)
 #Settings
-#app.secret_key='mysecretkey'
+app.secret_key='mysecretkey'
 
 @app.route('/cafam/<medicamento>', methods= ['GET'])
 def cafam(medicamento):
@@ -963,6 +963,7 @@ def getmedicines():
     medicines = []
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM medicines')
+    #cur.execute('SELECT * FROM ( SELECT * FROM medicines ORDER BY id DESC LIMIT 100 ) sub ORDER BY id ASC')
     data = cur.fetchall()
     for medicine in data:
         medicines.append({
