@@ -1,9 +1,8 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_mysqldb import MySQL
 from flask_cors import CORS
 #---------------------------------------------------------------------------------------------
 import requests as s
-import bs4
 import sys
 from lxml import html
 from lxml.html import fromstring
@@ -814,8 +813,9 @@ def locatel(medicamento):
             pagina = s.get(url, proxies={"http": proxy},headers=headers, timeout=5)
             #print(url, proxies,headers)
             if pagina.status_code == 200:
+                pagina.encoding = 'ISO-8859-1'
                 try:
-                    pagina.encoding = 'ISO-8859-1'
+                    
                     jsonList = []
                     if str(pagina.content) != "b''":
                         try:
@@ -859,7 +859,7 @@ def locatel(medicamento):
                                 #return 0
                         except:
                             print("La request tiene bastantes productos y fallo en esta sección")
-                            jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A", "url":"N/A" })
+                            jsonList.append({"medicamento" : "La petición hecha no fue exitosa, bastantes productos", "precio" : "N/A", "url":"N/A" })
                             #result.append(jsonList)
                             return json.dumps(jsonList, indent = 1)
                             return -3
@@ -905,7 +905,7 @@ def locatel(medicamento):
                         break
                 except:
                     print("La petición hecha no fue exitosa")
-                    jsonList.append({"medicamento" : "La petición hecha no fue exitosa", "precio" : "N/A",  "url":"N/A" })
+                    jsonList.append({"medicamento" : "La petición hecha no fue exitosa, error de conexion", "precio" : "N/A",  "url":"N/A" })
                     #result.append(jsonList)
                     return json.dumps(jsonList, indent = 1)
                     return 1
@@ -921,6 +921,7 @@ def locatel(medicamento):
             #result.append(jsonList)
             return json.dumps(jsonList, indent = 1)
             return 1
+
 
 @app.route('/wiki/<medicamento>', methods = ['GET'])
 def wiki(medicamento):
