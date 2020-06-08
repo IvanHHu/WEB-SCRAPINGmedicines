@@ -1,0 +1,22 @@
+columnas con comas
+
+H, J, W
+
+				
+bd va relativamente bien hasta 50,000 ()
+				
+
+
+
+UPDATE medicines SET id = 5000 WHERE producto = "ZOLPRA® 500 MG CAPSULAS";
+UPDATE medicines SET id = 10001 WHERE id = 1 AND producto = "INLYTA ® 1 MG TABLETA RECUBIERTA"
+
+
+
+
+
+
+
+
+
+
