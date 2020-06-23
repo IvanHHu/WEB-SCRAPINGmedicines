@@ -20,11 +20,11 @@ from collections import Counter
 app = Flask(__name__)
 
 #My sql connection
-#app.config[ 'MYSQL_HOST'] = 'localhost'
-#app.config[ 'MYSQL_USER'] = 'root'
-#app.config[ 'MYSQL_PASSWORD'] = ''
-#app.config[ 'MYSQL_DB'] = 'bdmedicines'
-#mysql = MySQL(app)
+app.config[ 'MYSQL_HOST'] = 'localhost'
+app.config[ 'MYSQL_USER'] = 'root'
+app.config[ 'MYSQL_PASSWORD'] = 'root1234'
+app.config[ 'MYSQL_DB'] = 'bdmedicines'
+mysql = MySQL(app)
 
 CORS(app)
 #Settings
@@ -34,7 +34,6 @@ app.secret_key='mysecretkey'
 def hello():
     return "Hello, This is webScraping medicines"
 
-
 @app.route('/cafam/<medicamento>', methods= ['GET'])
 def cafam(medicamento):
     def get_proxies():
@@ -42,14 +41,14 @@ def cafam(medicamento):
         response = s.get(url)
         parser = fromstring(response.text)
         proxies = set()
-        try:
-            for i in parser.xpath('//tbody/tr')[:10]:
-                if i.xpath('.//td[7][contains(text(),"yes")]'):
-                    proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
-                    proxies.add(proxy)
-            return proxies
-        except:
-            print("Error. Posible proxie bloqueado")
+        #try:
+        for i in parser.xpath('//tbody/tr')[:10]:
+            if i.xpath('.//td[7][contains(text(),"yes")]'):
+                proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+                proxies.add(proxy)
+        return proxies
+    #except:
+        #print("Error. Posible proxie bloqueado")
        
     #----------------------------------------------------------------------------------------------------
 
@@ -521,7 +520,8 @@ def cruzverde(medicamento):
                                             if preciosOferta[i] != '':
                                                 preciosOferta2.append(preciosOferta[i])
 
-                                    preciosFull = precios2 + preciosOferta2
+                                    #preciosFull = precios2 + preciosOferta2
+                                    preciosFull = preciosOferta2
                                     print(precios2)
                                     print(preciosOferta2)
 
@@ -617,7 +617,8 @@ def cruzverde(medicamento):
                                         preciosOferta2.append(preciosOferta[i])
 
                             
-                            preciosFull = precios2 + preciosOferta2
+                            #preciosFull = precios2 + preciosOferta2
+                            preciosFull = preciosOferta2
 
                             for i in range(0,len(preciosFull)):
                                 preciosFull[i] = float(preciosFull[i])
@@ -676,12 +677,19 @@ def cruzverde(medicamento):
                                     preciosOferta[i] = preciosOferta[i].replace("$", "")
                                     preciosOferta[i] = preciosOferta[i].replace(".", "")
                                     preciosOferta[i] = preciosOferta[i].replace("                                    ", "")
+                                    preciosOferta[i] = preciosOferta[i].replace("                        ", "")
+                                    preciosOferta[i] = preciosOferta[i].replace("(Oferta)                        ", "")
+                                    preciosOferta[i] = preciosOferta[i].replace("(Oferta)", "")
+
                                     
                                     if preciosOferta[i] != '':
                                         preciosOferta2.append(preciosOferta[i])
 
 
-                            preciosFull = precios2 + preciosOferta2
+                            #preciosFull = precios2 + preciosOferta2
+                            preciosFull = preciosOferta2
+                            #print(preciosFull)
+
                             caracteres = Counter(medicamento)
                             #printprint(caracteres)
                             #print(len(preciosFull)-1)
@@ -753,29 +761,6 @@ def cruzverde(medicamento):
         #return 1
 
 
-
-@app.route('/wiki/<medicamento>', methods = ['GET'])
-def wiki(medicamento):
-    descripcion= []
-    try:
-        wikipedia.set_lang("es")
-        parrafo = wikipedia.summary( medicamento, sentences=2)
-
-        descripcion.append({
-                'medicamento': medicamento,
-                'descripcion': parrafo
-            })
-        return jsonify( descripcion)
-        
-    except :
-        descripcion.append({
-                'medicamento': medicamento,
-                'descripcion': "Sin resultados en wikipedia"
-            })
-        return jsonify( descripcion)
-
-
-
 @app.route('/locatel/<medicamento>', methods = ['GET'])
 def locatel(medicamento):
     def get_proxies():
@@ -783,14 +768,14 @@ def locatel(medicamento):
         response = s.get(url)
         parser = fromstring(response.text)
         proxies = set()
-        try:
-            for i in parser.xpath('//tbody/tr')[:10]:
-                if i.xpath('.//td[7][contains(text(),"yes")]'):
-                    proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
-                    proxies.add(proxy)
-            return proxies
-        except:
-            print("Error. Proxie bloqueado")
+        #try:
+        for i in parser.xpath('//tbody/tr')[:10]:
+            if i.xpath('.//td[7][contains(text(),"yes")]'):
+                proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+                proxies.add(proxy)
+        return proxies
+    #except:
+        #print("Error. Proxie bloqueado")
     
     #----------------------------------------------------------------------------------------------------
     user_agent_list = [
@@ -832,20 +817,20 @@ def locatel(medicamento):
         proxy_pool = cycle(proxies)
         proxy = next(proxy_pool)
     except:
-        print("Posible proxie bloqueado")
+        print("Posible proxie bloqueado en locatel")
 
     pag = 0
     for pagina in range(50):
         pag= pag + 1 
         url = "https://www.locatelcolombia.com/buscapagina?ft=" + medicamento + "&PS=12&sl=e3672a70-87b5-474e-b217-cea662d2e462&cc=1&sm=0&PageNumber="+ str(pag)
         #print(pag)
-        
         try:
             pagina = s.get(url, proxies={"http": proxy},headers=headers, timeout=5)
             #print(url, proxies,headers)
             if pagina.status_code == 200:
                 pagina.encoding = 'ISO-8859-1'
                 try:
+                    
                     jsonList = []
                     if str(pagina.content) != "b''":
                         try:
@@ -947,10 +932,182 @@ def locatel(medicamento):
                 return 2
         except:
             print("Error desconocido al iniciar la petición")
-            jsonList.append({"medicamento" : "Error desconocido al iniciar la petición", "precio" : "N/A",  "url":"N/A" })
+            jsonList = []
+            jsonList.append({"medicamento" : "Error desconocido al iniciar la petición, posible proxie bloqueado", "precio" : "N/A",  "url":"N/A" })
             #result.append(jsonList)
             return json.dumps(jsonList, indent = 1)
             return 1
+
+
+@app.route('/wiki/<medicamento>', methods = ['GET'])
+def wiki(medicamento):
+    descripcion= []
+    try:
+        wikipedia.set_lang("es")
+        parrafo = wikipedia.summary( medicamento, sentences=2)
+
+        descripcion.append({
+                'medicamento': medicamento,
+                'descripcion': parrafo
+            })
+        return jsonify( descripcion)
+        
+    except :
+        descripcion.append({
+                'medicamento': medicamento,
+                'descripcion': "Sin resultados en wikipedia"
+            })
+        return jsonify( descripcion)
+
+
+@app.route('/get_last_medicines', methods = ['GET'])
+def getlastmedicines():
+    medicines = []
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM ( SELECT * FROM medicines ORDER BY id DESC LIMIT 50 ) sub ORDER BY id ASC')
+    data = cur.fetchall()
+    for medicine in data:
+        medicines.append({
+            'id': medicine[0],
+            'producto': medicine[1],
+            'generico': medicine[17]
+        })
+    return jsonify(medicines)
+
+
+@app.route('/get_medicines', methods = ['GET'])
+def getmedicines():
+    medicines = []
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM medicines')
+    #cur.execute('SELECT * FROM ( SELECT * FROM medicines ORDER BY id DESC LIMIT 100 ) sub ORDER BY id ASC')
+    data = cur.fetchall()
+    for medicine in data:
+        medicines.append({
+            'id': medicine[0],
+            'producto': medicine[1],
+            'generico': medicine[17]
+        })
+    return jsonify(medicines)
+
+
+@app.route('/get_medicine/<medicamento>', methods = ['GET'])
+def getmedicine(medicamento):
+    coincidencias = []
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM medicines WHERE producto LIKE'+ '"' + medicamento +'%"')
+    data = cur.fetchall()
+    #print(data)
+    if data != ():
+        for medicine in data:
+            #print(coincidencias)
+
+            if (coincidencias == []):
+                coincidencias.append({
+                'id': medicine[0],
+                'producto': medicine[1],
+                #'desComercial': medicine[10],
+                'generico': medicine[17]
+                })
+
+            else:
+                if any(tag['producto'] == medicine[1] for tag in coincidencias):
+                    print("si hay un producto existente")
+
+                else:
+                    coincidencias.append({
+                    'id': medicine[0],
+                    'producto': medicine[1],
+                    'generico': medicine[17]
+                    })
+
+            
+        return jsonify(coincidencias)
+
+
+
+    elif data == ():
+        coincidencias.append({
+            'id': "N/A",
+            'producto': "No contamos con el medicamento en nuestros datos. Puede buscar directamente el medicamento en la seccion Search",
+            'generico': "N/A"
+        })
+        return jsonify(coincidencias)
+
+@app.route('/get_medicine2/<medicamento>', methods = ['GET'])
+def getmedicine2(medicamento):
+    coincidencias = []
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM medicines2 WHERE producto LIKE'+ '"' + medicamento +'%"')
+    data = cur.fetchall()
+    #print(data)
+    if data != ():
+        for medicine in data:
+            #print(coincidencias)
+            if (coincidencias == []):
+                coincidencias.append({
+                'id': medicine[0],
+                'producto': medicine[1],
+                'generico': medicine[3]
+                })
+            else:
+                if any(tag['producto'] == medicine[1] for tag in coincidencias):
+                    print("si hay un producto existente")
+                else:
+                    coincidencias.append({
+                    'id': medicine[0],
+                    'producto': medicine[1],
+                    'generico': medicine[3]
+                    })
+        return jsonify(coincidencias)
+    elif data == ():
+        coincidencias.append({
+            'id': "N/A",
+            'producto': "No contamos con el medicamento en nuestros datos. Puede buscar directamente el medicamento en la seccion Search"
+        })
+        return jsonify(coincidencias)
+
+@app.route('/get_medicine3/<medicamento>', methods = ['GET'])
+def getmedicine3(medicamento):
+    coincidencias = []
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT id, presentacion from medicines2 WHERE producto LIKE' '"' + medicamento +'%"')
+    data = cur.fetchall()
+    #print(data)
+    if data != ():
+        for medicine in data:
+            #print(coincidencias)
+
+            if (coincidencias == []):
+                coincidencias.append({
+                'id': medicine[0],
+                'presentacion': medicine[1]
+                #'desComercial': medicine[10],
+                })
+
+            else:
+                if any(tag['id'] == medicine[0] for tag in coincidencias):
+                    print("si hay un producto existente")
+
+                else:
+                    coincidencias.append({
+                    'id': medicine[0],
+                    'presentacion': medicine[1]
+                    })
+
+            
+        return jsonify(coincidencias)
+
+
+
+    elif data == ():
+        coincidencias.append({
+            'id': "N/A",
+            'producto': "No contamos con el medicamento en nuestros datos. Puede buscar directamente el medicamento en la seccion Search",
+            'generico': "N/A"
+        })
+        return jsonify(coincidencias)
+
 
 if __name__ == "__main__":
     app.run()

@@ -35,14 +35,14 @@ def cafam(medicamento):
         response = s.get(url)
         parser = fromstring(response.text)
         proxies = set()
-        try:
-            for i in parser.xpath('//tbody/tr')[:10]:
-                if i.xpath('.//td[7][contains(text(),"yes")]'):
-                    proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
-                    proxies.add(proxy)
-            return proxies
-        except:
-            print("Error. Posible proxie bloqueado")
+        #try:
+        for i in parser.xpath('//tbody/tr')[:10]:
+            if i.xpath('.//td[7][contains(text(),"yes")]'):
+                proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+                proxies.add(proxy)
+        return proxies
+    #except:
+        #print("Error. Posible proxie bloqueado")
        
     #----------------------------------------------------------------------------------------------------
 
@@ -514,9 +514,10 @@ def cruzverde(medicamento):
                                             if preciosOferta[i] != '':
                                                 preciosOferta2.append(preciosOferta[i])
 
-                                    preciosFull = precios2 + preciosOferta2
-                                    print(precios2)
-                                    print(preciosOferta2)
+                                    #preciosFull = precios2 + preciosOferta2
+                                    preciosFull = preciosOferta2
+                                    #print(precios2)
+                                    #print(preciosOferta2)
 
                                     for i in range(0,len(preciosFull)):
                                        preciosFull[i] = float(preciosFull[i])
@@ -610,7 +611,8 @@ def cruzverde(medicamento):
                                         preciosOferta2.append(preciosOferta[i])
 
                             
-                            preciosFull = precios2 + preciosOferta2
+                            #preciosFull = precios2 + preciosOferta2
+                            preciosFull = preciosOferta2
 
                             for i in range(0,len(preciosFull)):
                                 preciosFull[i] = float(preciosFull[i])
@@ -669,12 +671,19 @@ def cruzverde(medicamento):
                                     preciosOferta[i] = preciosOferta[i].replace("$", "")
                                     preciosOferta[i] = preciosOferta[i].replace(".", "")
                                     preciosOferta[i] = preciosOferta[i].replace("                                    ", "")
+                                    preciosOferta[i] = preciosOferta[i].replace("                        ", "")
+                                    preciosOferta[i] = preciosOferta[i].replace("(Oferta)                        ", "")
+                                    preciosOferta[i] = preciosOferta[i].replace("(Oferta)", "")
+
                                     
                                     if preciosOferta[i] != '':
                                         preciosOferta2.append(preciosOferta[i])
 
 
-                            preciosFull = precios2 + preciosOferta2
+                            #preciosFull = precios2 + preciosOferta2
+                            preciosFull = preciosOferta2
+                            #print(preciosFull)
+
                             caracteres = Counter(medicamento)
                             #printprint(caracteres)
                             #print(len(preciosFull)-1)
@@ -753,14 +762,14 @@ def locatel(medicamento):
         response = s.get(url)
         parser = fromstring(response.text)
         proxies = set()
-        try:
-            for i in parser.xpath('//tbody/tr')[:10]:
-                if i.xpath('.//td[7][contains(text(),"yes")]'):
-                    proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
-                    proxies.add(proxy)
-            return proxies
-        except:
-            print("Error. Proxie bloqueado")
+        #try:
+        for i in parser.xpath('//tbody/tr')[:10]:
+            if i.xpath('.//td[7][contains(text(),"yes")]'):
+                proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+                proxies.add(proxy)
+        return proxies
+    #except:
+        #print("Error. Proxie bloqueado")
     
     #----------------------------------------------------------------------------------------------------
     user_agent_list = [
@@ -802,7 +811,7 @@ def locatel(medicamento):
         proxy_pool = cycle(proxies)
         proxy = next(proxy_pool)
     except:
-        print("Posible proxie bloqueado")
+        print("Posible proxie bloqueado en locatel")
 
     pag = 0
     for pagina in range(50):
@@ -851,11 +860,11 @@ def locatel(medicamento):
                                         jsonList.append({"medicamento" : nombres[i], "precio" : precios[i], "url": urlPrueba})
 
                                 #print(jsonList)
-                                result.append(jsonList)
+                                #result.append(jsonList)
                             else:
                                 print(sinResultados[0] + "... No hay esultados")
                                 #print(result)
-                                return json.dumps(result , indent = 1)
+                                return json.dumps(jsonList , indent = 1)
                                 #return 0
                         except:
                             print("La request tiene bastantes productos y fallo en esta sección")
@@ -917,7 +926,8 @@ def locatel(medicamento):
                 return 2
         except:
             print("Error desconocido al iniciar la petición")
-            jsonList.append({"medicamento" : "Error desconocido al iniciar la petición", "precio" : "N/A",  "url":"N/A" })
+            jsonList = []
+            jsonList.append({"medicamento" : "Error desconocido al iniciar la petición, posible proxie bloqueado", "precio" : "N/A",  "url":"N/A" })
             #result.append(jsonList)
             return json.dumps(jsonList, indent = 1)
             return 1
